@@ -1,0 +1,154 @@
+.dot circle {
+    /*fill: #2381b3;*/
+    opacity: 0.8;
+}
+
+.dot text {
+    text-anchor: middle;
+    font-size: 10px;
+    pointer-events: none;
+    fill: #555;
+}
+
+.dot text {
+    opacity: 0;
+}
+
+.dot:hover text {
+    opacity: 1;
+}
+
+body {
+    font-family: "Open Sans";
+    margin: 0;
+}
+
+label {
+    font-size: 13px;
+}
+
+#main {
+    margin: 20px;
+}
+
+/*this part is for bar chart*/
+select {
+    display: block;
+}
+.bar {
+    /*fill: purple;*/
+    fill: steelblue;
+    opacity: 0.8;
+}
+
+.axis {
+    font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+/*this part added to partition into two columns*/
+* {
+    box-sizing: border-box;
+}
+
+/* Create two unequal columns that floats next to each other */
+.column {
+    float: left;
+    padding: 10px;
+    height: 300px; /* Should be removed. Only for demonstration */
+}
+
+.left {
+    height: 100%;
+    width: 25%;
+}
+
+.right {
+    height: 100%;
+    width: 75%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+html, body {
+    height: 100%;
+}
+
+.table {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+
+.cell {
+    height: 100%;
+    display: table-cell;
+}
+
+.cell:first-child {
+    width: 1px;
+    /*background: #ff0000;*/
+}
+
+.cell:last-child {
+    /*background: #0000ff;*/
+}
+
+.inner {
+    width: 100px;
+}
+
+button {
+    display: inline-block;
+    top: 50%;
+    margin-top:30px;
+    left: 50%;
+    margin-left:50px;
+
+}
+
+.rectangle {
+    /*fill: steelblue;*/
+}
+.rectangle:hover {
+    /*fill: orange;*/
+}
+.axis {
+    font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+#bar img {
+    display: block;
+
+}
+
+/*radio buttons*/
+.radio{
+    text-align: center;
+}
+.row{
+    text-align: center;
+}
+
+/*starting from here*/
+circle {
+    fill: #ff6600;
+}

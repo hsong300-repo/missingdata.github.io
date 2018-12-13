@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+    body {
+        font: 10px sans-serif;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+    .dot {
+        stroke: #000;
+    }
+
+</style>
+<body>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<p>Price of Whiskey by different Age group</p>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+<div class='radio'>
+    <label class='radio-inline'>
+        <input type="radio" name="vis" value="color" id="color"> color
+        <!--<input type="radio" name="color" value="color" onclick='change(this.value)'> color-->
+    </label>
+    <label class='radio-inline'>
+        <input type="radio" name="vis" value="gradient" > gradient
+        <!--<input type="radio" name="gradient" value="gradient" onclick='change(this.value)'> gradient-->
+    </label>
+    <label class='radio-inline'>
+        <input type="radio" name="vis" value="sketch"> sketch
+    </label>
+    <label class='radio-inline'>
+        <input type="radio" name="vis" value="local" checked> local
+    </label>
+    <label class='radio-inline'>
+        <input type="radio" name="vis" value="global"> global
+    </label>
+    <label class='radio-inline'>
+        <input type="radio" name="vis" value="default"  > default
+        <!--<input type="radio" name="default" value="default" onclick='change(this.value)' checked > default-->
+    </label>
+</div>
+<script>
+    function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+
+        var removed_idx = [];
+        var remove_num = parseInt(max * 0.2);
+        console.log('how many',remove_num);
+
+        for(var i = 0; i < remove_num; i++){
+            var idx = Math.floor(Math.random() * (max - min + 1)) + min;
+            removed_idx.push(idx);
+            //in order to removed repeated index
+
+
+        }
+        console.log('removed_idx',removed_idx);
+        return removed_idx;
+        // return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+
+    var margin = {top: 20, right: 20, bottom: 30, left: 40},
+        width = 600 - margin.left - margin.right,
+        height = 600 - margin.top - margin.bottom;
+
+    var x = d3.scaleLinear()
+        .range([0, width]);
+
+    var y = d3.scaleLinear()
+        .range([height, 0]);
+
+    var xAxis = d3.axisBottom(x);
+
+    var yAxis = d3.axisLeft(y);
+
+    var svg = d3.select("body").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    d3.csv("./whiskey.csv", function(error, data) {
+        if (error) throw error;
+
+        // randomly remove
+        removed_idx = getRandomInt(0,data.length-1);
+
+
+        data.forEach(function(d) {
+            d.Age = +d.Age;
+            d.Price = +d.Price;
+        });
+
+        //buttons clicked
+        // d3.selectAll(("input[value='color']")).on("change", function() {
+        //     console.log('onchange color');
+        //     redraw_color(data);
+        // });
+
+
+
+        // function redraw_color(data){
+        //     console.log('here');
+        //     x.domain(d3.extent(data, function(d) { return d.Age; })).nice();
+        //     y.domain(d3.extent(data, function(d) { return d.Price; })).nice();
+        //
+        //     svg.selectAll(".dot")
+        //         .data(data)
+        //         .enter().append("circle")
+        //         .attr("class", "dot")
+        //         .attr("r", 3.5)
+        //         .attr("cx", function(d) { return x(d.Age); })
+        //         .attr("cy", function(d) { return y(d.Price); })
+        //         .style("fill", function(d,i) {
+        //             if(removed_idx.includes(i)){
+        //                 return 'red';
+        //             }else{
+        //                 return "red";
+        //             }
+        //         });
+        //
+        //
+        //     svg.append("g")
+        //         .attr("class", "x axis")
+        //         .attr("transform", "translate(0," + height + ")")
+        //         .call(xAxis)
+        //         .append("text")
+        //         .attr("class", "label")
+        //         .attr("x", width)
+        //         .attr("y", -6)
+        //         .style("text-anchor", "end")
+        //         .text("Sepal Width (cm)");
+        //
+        //
+        //     svg.append("g")
+        //         .attr("class", "y axis")
+        //         .call(yAxis)
+        //         .append("text")
+        //         .attr("class", "label")
+        //         .attr("transform", "rotate(-90)")
+        //         .attr("y", 6)
+        //         .attr("dy", ".71em")
+        //         .style("text-anchor", "end")
+        //         .text("Sepal Length (cm)")
+        //
+        // }
+
+        //define the gradient for
+//         var gradient = svg.append("svg:defs")
+//             .append("svg:linearGradient")
+//             .attr("id", "gradient")
+//             .attr("x1", "0%")
+//             .attr("y1", "0%")
+//             .attr("x2", "100%")
+//             .attr("y2", "100%")
+//             .attr("spreadMethod", "pad");
+//
+// // Define the gradient colors
+//         gradient.append("svg:stop")
+//             .attr("offset", "0%")
+//             .attr("stop-color", "white")
+//             .attr("stop-opacity", 1);
+//
+//         gradient.append("svg:stop")
+//             .attr("offset", "100%")
+//             .attr("stop-color", "#steelblue")
+//             .attr("stop-opacity", 1);
+
+        var radialGradient = svg.append("defs")
+            .append("radialGradient")
+            .attr("id", "radial-gradient");
+
+        radialGradient.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", "#fff");
+
+        radialGradient.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", "steelblue");
+
+// Fill the circle with the gradient
+        x.domain(d3.extent(data, function(d) { return d.Age; })).nice();
+        y.domain(d3.extent(data, function(d) { return d.Price; })).nice();
+
+        svg.selectAll(".dot")
+            .data(data)
+            .enter().append("circle")
+            .attr("class", "dot")
+            .attr("r", 3.5)
+            .attr("cx", function(d) { return x(d.Age); })
+            .attr("cy", function(d) { return y(d.Price); })
+            // .style("fill", function(d) { return "steelblue"; });
+            // .style("stroke",function(d,i){
+            //     if(removed_idx.includes(i)){
+            //         return 'white';
+            //     }else{
+            //         return 'black';
+            //     }
+            // })
+            .style("fill", function(d,i) {
+                if(removed_idx.includes(i)){
+                    return 'white';
+                }else{
+                    return "steelblue";
+                }});
+
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            .append("text")
+            .attr("class", "label")
+            .attr("x", width)
+            .attr("y", -6)
+            .style("text-anchor", "end")
+            .text("Sepal Width (cm)");
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            .attr("class", "label")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("Sepal Length (cm)");
+
+        //bars
+        var bars = svg.selectAll(".bar")
+            .remove()
+            .exit()
+            .data(data);
+
+        bars.enter().append("rect")
+            .attr("class", "bar")
+            .filter(function(d,i){return removed_idx.includes(i);})
+            .attr("x", function(d) { return x(d.Age); })
+            .attr("width", 1)
+            .attr("y", function(d) {
+                return y(d.Price); })
+            .attr("fill","orange")
+            .attr("height", function(d) { return height - y(d.Price); });
+
+
+
+
+
+
+    });
+
+</script>

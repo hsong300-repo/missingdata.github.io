@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style> /* set the CSS */
+/*.bar { fill: steelblue; }*/
+
+.radio{
+    text-align: center;
+}
+.row{
+    text-align: center;
+}
+
+    /*starting from here*/
+circle {
+    fill: #ff6600;
+}
+
+.error-line {
+    stroke: #b30059;
+    stroke-dasharray: 2,2;
+}
+
+.error-cap {
+    stroke: #b30059;
+    stroke-width: 2px;
+    stroke-type: solid;
+}
+
+.tooltip {
+    position: absolute;
+    height: auto;
+    width: auto;
+    padding: 15px;
+    background: #660033;
+    color: white;
+    font-family: Monospace, Serif;
+}
+
+.tooltip:after {
+    content: " ";
+    position: absolute;
+    top: 50%;
+    right: 100%; /* To the left of the tooltip */
+    margin-top: -10px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent #660033 transparent transparent;
+}
+
+.plot-bg {
+    fill: #fff0e6;
+}
+
+
+</style>
+<body>
+
+<div class='container'>
+    <div class='row'>
+        <p>Price of Whiskey depending on different Category</p>
+        <div class='radio'>
+            <label class='radio-inline'>
+                <input type="radio" name="vis" value="color"> color
+                <!--<input type="radio" name="color" value="color" onclick='change(this.value)'> color-->
+            </label>
+            <label class='radio-inline'>
+                <input type="radio" name="vis" value="gradient" > gradient
+                <!--<input type="radio" name="gradient" value="gradient" onclick='change(this.value)'> gradient-->
+            </label>
+            <label class='radio-inline'>
+                <input type="radio" name="vis" value="sketch"> sketch
+            </label>
+
+            <label class='radio-inline'>
+                <input type="radio" name="vis" value="local"> local
+            </label>
+            <label class='radio-inline'>
+                <input type="radio" name="vis" value="global"> global
+            </label>
+            <label class='radio-inline'>
+                <input type="radio" name="vis" value="default" checked > default
+                <!--<input type="radio" name="default" value="default" onclick='change(this.value)' checked > default-->
+            </label>
+            <label class='radio-inline'>
+                <input type="radio" name="vis" value="error"> error
+            </label>
+        </div>
+        <svg class='chart'>
+        <svg height="10" width="10" xmlns="http://www.w3.org/2000/svg" version="1.1"> <defs> <pattern id="diagonal-stripe-2" patternUnits="userSpaceOnUse" width="10" height="10"> <image xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMCcgaGVpZ2h0PScxMCc+CiAgPHJlY3Qgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPSd3aGl0ZScvPgogIDxwYXRoIGQ9J00tMSwxIGwyLC0yCiAgICAgICAgICAgTTAsMTAgbDEwLC0xMAogICAgICAgICAgIE05LDExIGwyLC0yJyBzdHJva2U9J2JsYWNrJyBzdHJva2Utd2lkdGg9JzInLz4KPC9zdmc+" x="0" y="0" width="10" height="10"> </image> </pattern> </defs> </svg>
+        </svg>
+    </div>
+</div>
+
+<!-- load the d3.js library -->
+<script src="//d3js.org/d3.v4.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<!--sketchy-->
+<!--<script src="d3.sketchy.js"></script>-->
+
+
+<script>
+    //get inclusive of the min and max, come back to it to remove duplication
+    function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+
+        var removed_idx = [];
+        var remove_num = parseInt(max * 0.2);
+        console.log('how many',remove_num);
+
+        for(var i = 0; i < remove_num; i++){
+            var idx = Math.floor(Math.random() * (max - min + 1)) + min;
+            removed_idx.push(idx);
+            //in order to removed repeated index
+
+
+        }
+        console.log('removed_idx',removed_idx);
+        return removed_idx;
+        // return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+
+    // set the dimensions and margins of the graph
+    var margin = {top: 20, right: 20, bottom: 30, left: 40},
+        width = 960 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom;
+    // set the ranges
+    var x = d3.scaleBand()
+        .range([0, width])
+        .padding(0.1);
+    var y = d3.scaleLinear()
+        .range([height, 0]);
+
+    // append the svg object to the body of the page
+    // append a 'group' element to 'svg'
+    // moves the 'group' element to the top left margin
+    var svg = d3.select("body").append("svg")
+            .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+    // get the data
+    d3.csv("whiskey.csv", function(error, data) {
+        if (error) throw error;
+
+        // max-1, because the index starts from zero, index start from 0 to length of data
+        removed_idx = getRandomInt(0,data.length-1);
+
+        // console.log('length',data.length);
+        // format the data
+        data.forEach(function(d) {
+            d.Price = +d.Price;
+        });
+
+        //color clicked
+        d3.selectAll(("input[value='color']")).on("change", function() {
+            console.log('onchange color');
+            redraw_color(data);
+        });
+
+        d3.selectAll(("input[value='gradient']")).on("change", function() {
+            console.log('onchange gradient');
+            redraw_gradient(data);
+        });
+
+        d3.selectAll(("input[value='error']")).on("change", function() {
+            console.log('onchange error');
+            redraw_error(data);
+        });
+
+        d3.selectAll(("input[value='global']")).on("change", function() {
+            console.log('onchange global count');
+            redraw_global(data);
+        });
+
+        d3.selectAll(("input[value='local']")).on("change", function() {
+            console.log('onchange local');
+            redraw_local(data);
+        });
+
+        d3.selectAll(("input[value='sketch']")).on("change", function() {
+            console.log('onchange sketch');
+            redraw_sketch(data);
+        });
+
+        function redraw_error(data){
+
+            x.domain(data.map(function(d) { return d.Category; }));
+            y.domain([0, d3.max(data, function(d) { return d.Price; })]);
+
+            var bars = svg.selectAll(".bar")
+                .remove()
+                .exit()
+                .data(data);
+
+            // Add Error Line
+            svg.append("g").selectAll("line")
+                .data(data).enter()
+                .append("line")
+                .attr("class", "error-line")
+                .filter(function(d,i){return removed_idx.includes(i);})
+                .attr("x1", function(d) {
+                    return x(d.Category);
+                })
+                .attr("y1", function(d) {
+                    return y(d.Price -50);
+                })
+                .attr("x2", function(d) {
+                    return x(d.Category);
+                })
+                .attr("y2", function(d) {
+                    return y(d.Price +50);
+                });
+
+            bars.enter().append("rect")
+                .attr("class", "bar")
+                .attr("x", function(d) { return x(d.Category); })
+                .attr("width", x.bandwidth())
+                .attr("y", function(d) {
+                    return y(d.Price); })
+                .attr("fill",function(d,i){
+                    if(removed_idx.includes(i)) {
+                        return "steelblue";
+                    }else{
+                        return "steelblue";
+                    }
+                })
+                .attr("height", function(d) { return height - y(d.Price); });
+            // add the x Axis
+            svg.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x));
+            // add the y Axis
+            svg.append("g")
+                .call(d3.axisLeft(y));
+
+            // var sketchyRectangle = d3.sketchy.rect();
+            //
+            // sketchyRectangle
+            //     .height(100)
+            //     .width(50)
+            //     .x(100)
+            //     .y(100)
+            //     .stroke("black")
+            //     .strokeWidth(10)
+            //     .jostle(5)
+            //
+            // // d3.select("#someParent").call(sketchyRectangle);
+            // svg.selectAll(".bar").call(sketchyRectangle);
+
+        }
+
+
+
+        function redraw_sketch(data){
+
+            x.domain(data.map(function(d) { return d.Category; }));
+            y.domain([0, d3.max(data, function(d) { return d.Price; })]);
+
+            var bars = svg.selectAll(".bar")
+                .remove()
+                .exit()
+                .data(data);
+
+            bars.enter().append("rect")
+                .attr("class", "bar")
+                .attr("x", function(d) { return x(d.Category); })
+                .attr("width", x.bandwidth())
+                .attr("y", function(d) {
+                    return y(d.Price); })
+                .attr("fill",function(d,i){
+                    if(removed_idx.includes(i)) {
+                        return "url(#diagonal-stripe-2)";
+                    }else{
+                        return "steelblue";
+                    }
+                })
+                .attr("height", function(d) { return height - y(d.Price); });
+            // add the x Axis
+            svg.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x));
+            // add the y Axis
+            svg.append("g")
+                .call(d3.axisLeft(y));
+
+            // var sketchyRectangle = d3.sketchy.rect();
+            //
+            // sketchyRectangle
+            //     .height(100)
+            //     .width(50)
+            //     .x(100)
+            //     .y(100)
+            //     .stroke("black")
+            //     .strokeWidth(10)
+            //     .jostle(5)
+            //
+            // // d3.select("#someParent").call(sketchyRectangle);
+            // svg.selectAll(".bar").call(sketchyRectangle);
+
+        }
+
+
+        function redraw_local(data){
+            // svg.remove();
+
+            x.domain(data.map(function(d) { return d.Category; }));
+            y.domain([0, d3.max(data, function(d) { return d.Price; })]);
+
+            var bars = svg.selectAll(".bar")
+                .remove()
+                .exit()
+                .data(data);
+
+            bars.enter().append("rect")
+                .attr("class", "bar")
+                .filter(function(d,i){return !removed_idx.includes(i);})
+                .attr("x", function(d) { return x(d.Category); })
+                .attr("width", x.bandwidth())
+                .attr("y", function(d) { return y(d.Price); })
+                .attr('fill','steelblue')
+                // .attr("height", function(d) { return height - y(d.Price); });
+                .attr("height", function(d) { return height - y(d.Price); });
+
+            bars.enter().append("rect")
+                .attr("class", "bar")
+                .filter(function(d,i){return removed_idx.includes(i);})
+                .attr("x", function(d) { return x(d.Category); })
+                .attr("width", x.bandwidth()/3)
+                .attr("y", function(d) { return y(d.Price); })
+                .attr('fill','orange')
+                // .attr("height", function(d) { return height - y(d.Price); });
+                .attr("height", function(d) { return height - y(d.Price); });
+
+            // add the x Axis
+            svg.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x));
+            // add the y Axis
+            svg.append("g")
+                .call(d3.axisLeft(y));
+        }
+
+        function redraw_global(data){
+            // svg.remove();
+
+            x.domain(data.map(function(d) { return d.Category; }));
+            y.domain([0, d3.max(data, function(d) { return d.Price; })]);
+
+            var bars = svg.selectAll(".bar")
+                .remove()
+                .exit()
+                .data(data);
+
+
+
+            bars.enter().append("rect")
+                .attr("class", "bar")
+                .attr("x", function(d) { return x(d.Category); })
+                .attr("width", x.bandwidth())
+                .attr("y", function(d) {
+                    return y(d.Price); })
+                .attr("fill","steelblue")
+                // .attr("height", function(d) { return height - y(d.Price); });
+                .attr("height", function(d) { return height - y(d.Price); });
+
+            // add the x Axis
+            svg.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x));
+            // add the y Axis
+            svg.append("g")
+                .call(d3.axisLeft(y));
+
+            var label_data = ["Missing"];
+
+            //legend
+            var padding = 40;
+            var label_height = removed_idx.length;
+
+            var legend = svg.append('g')
+                .attr('class', 'legend')
+                // .attr('transform', 'translate(' + (padding + 12) + ', 0)');
+                .attr('transform', 'translate(' + (width - padding - 12) + ','+padding +')');
+
+
+            console.log('height',height);
+            console.log('label_hieght',label_height);
+
+            legend.selectAll('rect')
+                .data(label_data)
+                .enter()
+                .append('rect')
+                .attr('x', 0)
+                .attr('y', function(d, i){
+                    return i * 18;
+                })
+                .attr('width', x.bandwidth())
+                .attr('height', label_height)
+                // .attr('height', label_height)
+                .attr('fill', function(d, i){
+                    return 'orange';
+                });
+
+            var count_text = [label_height.toString()];
+            legend.selectAll('text')
+                .data(count_text)
+                .enter()
+                .append('text')
+                .text(function(d){
+                    return d;
+                })
+                // .attr('x', 18)
+                .attr('x', 18)
+                .attr('y', function(d, i){
+                    // return i * 18;
+                    return label_height - 5;
+                })
+                .attr('text-anchor', 'start')
+                .attr('alignment-baseline', 'hanging');
+        }
+
+        function redraw_color(data){
+            // svg.remove();
+            x.domain(data.map(function(d) { return d.Category; }));
+            y.domain([0, d3.max(data, function(d) { return d.Price; })]);
+
+            var avgPrice = d3.mean(data,function(d){return y(d.Price)});
+            console.log('avg price',avgPrice);
+
+
+            // var bars = svg.selectAll(".bar")
+            //     .remove()
+            //     .exit()
+            //     .data(data);
+            //
+            //     bars.enter().append("rect")
+            //     .attr("class", "bar")
+            //     .attr("x", function(d,i) {
+            //         // console.log('category',x(d.Category), d.Category,i);
+            //         return x(d.Category); })
+            //     .attr("width", x.bandwidth())
+            //     .attr("y", function(d) {
+            //         // console.log('price',y(d.Price));
+            //         return y(d.Price); })
+            //     .attr("fill",function(d,i){
+            //         if(removed_idx.includes(i)) {
+            //             return "red";
+            //         }else{
+            //             return "steelblue";
+            //         }
+            //     })
+            //     .attr("height", function(d) { return height - y(d.Price); });
+
+
+            // average price
+
+            var avgPrice = d3.nest()
+                .key(function(d){return d.Category;})
+                .rollup(function(v){return d3.mean(v,function(d){return d.Price; });})
+                .entries(data);
+
+            console.log('avgPrice',avgPrice);
+
+
+            var bars = svg.selectAll(".bar")
+                .remove()
+                .exit()
+                .data(avgPrice);
+
+            bars.enter().append("rect")
+                .attr("class", "bar")
+                .attr("x", function(d) {
+                    // console.log('category',x(d.Category), d.Category,i);
+                    return x(d.key); })
+                .attr("width", x.bandwidth())
+                .attr("y", function(d) {
+                    // return y(d.Price); })
+                    return y(d.value); })
+            .attr("fill","steelblue")
+                .attr("height", function(d) { return height - y(d.value); });
+
+
+            // add the x Axis
+            svg.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x));
+            // add the y Axis
+            svg.append("g")
+                .call(d3.axisLeft(y));
+
+        }
+
+        function redraw_gradient(data){
+            x.domain(data.map(function(d) { return d.Category; }));
+            y.domain([0, d3.max(data, function(d) { return d.Price; })]);
+
+            var bars = svg.selectAll(".bar")
+                .remove()
+                .exit()
+                .data(data);
+
+            var gradient = svg.append("svg:defs")
+                .append("svg:linearGradient")
+                .attr("id", "gradient")
+                .attr("x1", "0%")
+                .attr("y1", "0%")
+                .attr("x2", "100%")
+                .attr("y2", "100%")
+                .attr("spreadMethod", "pad");
+
+            gradient.append("svg:stop")
+                .attr("offset", "0%")
+                .attr("stop-color", "steelblue")
+                .attr("stop-opacity", 1);
+
+            gradient.append("svg:stop")
+                .attr("offset", "100%")
+                .attr("stop-color", "white")
+                .attr("stop-opacity", 1);
+
+            bars.enter().append("rect")
+                .attr("class", "bar")
+                .attr("x", function(d) { return x(d.Category); })
+                .attr("width", x.bandwidth())
+                // .attr("y", function(d) { return y(d.Price); })
+                .attr("y", function(d) {
+                    return y(d.Price); })
+                .attr("fill",function(d,i){
+                    if(removed_idx.includes(i)) {
+                        return "url(#gradient)";
+                    }else{
+                        return "steelblue";
+                    }
+
+                })
+                .attr("height", function(d) { return height - y(d.Price); });
+            // add the x Axis
+            svg.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x));
+            // add the y Axis
+            svg.append("g")
+                .call(d3.axisLeft(y));
+
+        }
+
+
+        // Scale the range of the data in the domains
+        // x.domain(data.map(function(d) { return d.Category; }));
+        // y.domain([0, d3.max(data, function(d) { return d.Price; })]);
+        // // append the rectangles for the bar chart
+        // svg.selectAll(".bar")
+        //     .data(data)
+        //     .enter().append("rect")
+        //     .attr("class", "bar")
+        //     .attr("x", function(d) { return x(d.Category); })
+        //     .attr("width", x.bandwidth())
+        //     // .attr("y", function(d) { return y(d.Price); })
+        //     .attr("y", function(d) {
+        //         // console.log('y index');
+        //         // console.log(d,i);
+        //         return y(d.Price); })
+        //     // .attr("fill","red")
+        //     .attr("fill",function(d,i){
+        //         // if(removed_idx.includes(i)) {
+        //         //     return "red";
+        //         // }else{
+        //             return "steelblue";
+        //         // }
+        //         // }else{
+        //         //     return "steelblue";
+        //         // }
+        //     })
+        //     .attr("height", function(d) { return height - y(d.Price); });
+        // // add the x Axis
+        // svg.append("g")
+        //     .attr("transform", "translate(0," + height + ")")
+        //     .call(d3.axisBottom(x));
+        // // add the y Axis
+        // svg.append("g")
+        //     .call(d3.axisLeft(y));
+
+
+        /// ********this is where I start
+
+        // selection part
+        var elements = Object.keys(data[0])
+            .filter(function(d){
+                return ((d != "Name") & (d != "Country") & (d != "Category") & (d != "Brand"));
+            });
+        var selection = elements[0];
+
+
+        // Scale the range of the data in the domains
+        // x.domain(data.map(function(d) { return d.Category; }));
+        // y.domain([0, d3.max(data, function(d) { return d.Price; })]);
+
+        var y = d3.scaleLinear()
+            .domain([0, d3.max(data, function(d){
+                return +d[selection];
+            })])
+            .range([height, 0]);
+
+        var x = d3.scaleBand()
+        // .domain(data.map(function(d){ return d.Name;}))
+            .domain(data.map(function(d){ return d.Category;}))
+            // .rangeBands([0, width]);
+            .rangeRound([0, width])
+            .padding(0.1);
+
+        var xAxis = d3.axisBottom(x);
+
+        var yAxis = d3.axisLeft(y);
+
+        //this part
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            .selectAll("text")
+            .style("font-size", "8px")
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", "-.55em")
+            .attr("transform", "rotate(-90)" );
+
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis);
+
+        svg.selectAll("rectangle")
+            .data(data)
+            .enter()
+            .append("rect")
+            .attr("class","rectangle")
+            .attr("width", width/data.length-5)
+            .attr("height", function(d){
+                return height - y(+d[selection]);
+            })
+            .attr("x", function(d, i){
+                return (width / data.length) * i ;
+            })
+            .attr("y", function(d){
+                return y(+d[selection]);
+            })
+            .append("title")
+            // .style("margin-left", "10px")   //space between bars
+            .text(function(d){
+                // return d.Name + " : " + d[selection];
+                return d.Category + " : " + d[selection];
+
+            });
+
+
+        // var selector = d3.select("#bar_view")
+        var selector = d3.select("body").append("svg")
+                .append("select")
+            .attr("id","dropdown")
+            .on("change", function(d){
+                selection = document.getElementById("dropdown");
+
+                y.domain([0, d3.max(data, function(d){
+                    return +d[selection.value];})]);
+
+                yAxis.scale(y);
+
+                d3.selectAll(".rectangle")
+                    .transition()
+                    .attr("height", function(d){
+                        return height - y(+d[selection.value]);
+                    })
+                    .attr("x", function(d, i){
+                        return (width / data.length) * i ;
+                    })
+                    .attr("y", function(d){
+                        return y(+d[selection.value]);
+                    })
+                    .ease("linear")
+                    .select("title")
+                    .text(function(d){
+                        // return d.Name + " : " + d[selection.value];
+                        return d.Category + " : " + d[selection.value];
+
+                    });
+
+                d3.selectAll("g.y.axis")
+                    .transition()
+                    .call(yAxis);
+
+            });
+
+        selector.selectAll("option")
+            .data(elements)
+            .enter().append("option")
+            .attr("value", function(d){
+                return d;
+            })
+            .text(function(d){
+                return d;
+            });
+
+
+        // // append the rectangles for the bar chart
+        // svg.selectAll(".bar")
+        //     .data(data)
+        //     .enter().append("rect")
+        //     .attr("class", "bar")
+        //     .attr("x", function(d) { return x(d.Category); })
+        //     .attr("width", x.bandwidth())
+        //     // .attr("y", function(d) { return y(d.Price); })
+        //     .attr("y", function(d) {
+        //         // console.log('y index');
+        //         // console.log(d,i);
+        //         return y(d.Price); })
+        //     // .attr("fill","red")
+        //     .attr("fill",function(d,i){
+        //         // if(removed_idx.includes(i)) {
+        //         //     return "red";
+        //         // }else{
+        //         return "steelblue";
+        //         // }
+        //         // }else{
+        //         //     return "steelblue";
+        //         // }
+        //     })
+        //     .attr("height", function(d) { return height - y(d.Price); });
+        // // add the x Axis
+        // svg.append("g")
+        //     .attr("transform", "translate(0," + height + ")")
+        //     .call(d3.axisBottom(x));
+        // // add the y Axis
+        // svg.append("g")
+        //     .call(d3.axisLeft(y));
+
+
+
+    });
+</script>
+</body>
