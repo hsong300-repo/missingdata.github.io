@@ -3,9 +3,9 @@
 <head>
     <style>
 
-        .rectangle {
-            fill: steelblue;
-        }
+        /*.rectangle {*/
+            /*fill: steelblue;*/
+        /*}*/
         .rectangle:hover {
             fill: orange;
         }
@@ -106,6 +106,38 @@
             .attr("class", "y axis")
             .call(yAxis);
 
+
+        //gradient test
+        var gradient_bar = svg.append("defs")
+        // var gradient_bar = canvas.append("svg:defs")
+        //     .append("svg:linearGradient")
+            .append('linearGradient')
+            .attr("id", "svgGradient")
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "100%")
+            .attr("y2", "100%")
+            .attr("spreadMethod", "pad");
+
+        console.log('defs');
+
+        // gradient_bar.append("svg:stop")
+        gradient_bar.append('stop')
+            .attr('class','start')
+            .attr("offset", "0%")
+            .attr("stop-color", "steelblue")
+            .attr("stop-opacity", 1);
+
+        console.log('steop 1')
+
+        gradient_bar.append('stop')
+        // gradient_bar.append("svg:stop")
+            .attr('class','end')
+            .attr("offset", "100%")
+            .attr("stop-color", "white")
+            .attr("stop-opacity", 1);
+
+
         svg.selectAll("rectangle")
             // .data(data)
             .data(data)
@@ -124,6 +156,8 @@
             .attr("y", function(d){
                 return y(+d[selection]);
             })
+            // .attr('fill','steelblue')
+            .attr("fill","url(#svgGradient)")
             .append("title")
             // .style("margin-left", "10px")   //space between bars
             .text(function(d){

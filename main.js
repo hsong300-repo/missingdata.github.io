@@ -27,8 +27,7 @@ function getRandomInt(min, max) {
 function onXScaleChanged() {
     var select = d3.select('#xScaleSelect').node();
     // Get current value of select element, save to global chartScales
-    chartScales.x = select.options[select.selectedIndex].value;
-
+    chartScales.x = select.options[select.selectedIndex].value
     // Update chart
     updateChart();
 }
@@ -36,8 +35,7 @@ function onXScaleChanged() {
 function onYScaleChanged() {
     var select = d3.select('#yScaleSelect').node();
     // Get current value of select element, save to global chartScales
-    chartScales.y = select.options[select.selectedIndex].value;
-
+    chartScales.y = select.options[select.selectedIndex].value
     // Update chart
     updateChart();
 }
@@ -132,8 +130,6 @@ var transitionScale = d3.transition()
 
 
 
-
-
 function updateChart() {
     // **** Draw and Update your chart here ****
     // Update the scales based on new data attributes
@@ -208,7 +204,6 @@ function updateChart() {
 
     // if the radio button is clicked
     //color clicked
-    // dotsEnter.selectAll(("input[value='color']")).on("change", function() {
     d3.selectAll(("input[value='color']")).on("change", function() {
         console.log('onchange color');
         //work
@@ -298,15 +293,15 @@ function updateChart() {
             });
 
         // ENTER + UPDATE selections - bindings that happen on all updateChart calls
-        // dots.merge(dotsEnter)
-        //     .transition() // Add transition - this will interpolate the translate() on any changes
-        //     .duration(750)
-        //     .attr('transform', function(d) {
-        //         // Transform the group based on x and y property
-        //         var tx = xScale(d[chartScales.x]);
-        //         var ty = yScale(d[chartScales.y]);
-        //         return 'translate('+[tx, ty]+')';
-        //     });
+        dots.merge(dotsEnter)
+            .transition() // Add transition - this will interpolate the translate() on any changes
+            .duration(750)
+            .attr('transform', function(d) {
+                // Transform the group based on x and y property
+                var tx = xScale(d[chartScales.x]);
+                var ty = yScale(d[chartScales.y]);
+                return 'translate('+[tx, ty]+')';
+            });
 
     }// end of color
 
@@ -341,15 +336,15 @@ function updateChart() {
             });
 
         // ENTER + UPDATE selections - bindings that happen on all updateChart calls
-        // dots.merge(dotsEnter)
-        //     .transition() // Add transition - this will interpolate the translate() on any changes
-        //     .duration(750)
-        //     .attr('transform', function(d) {
-        //         // Transform the group based on x and y property
-        //         var tx = xScale(d[chartScales.x]);
-        //         var ty = yScale(d[chartScales.y]);
-        //         return 'translate('+[tx, ty]+')';
-        //     });
+        dots.merge(dotsEnter)
+            .transition() // Add transition - this will interpolate the translate() on any changes
+            .duration(750)
+            .attr('transform', function(d) {
+                // Transform the group based on x and y property
+                var tx = xScale(d[chartScales.x]);
+                var ty = yScale(d[chartScales.y]);
+                return 'translate('+[tx, ty]+')';
+            });
 
     }// end of gradient
 
@@ -538,6 +533,7 @@ var previewCsvUrl = function( csvUrl ) {
 
         // var svg = d3.select("body").append("svg")
         var canvas = d3.select("#bar_canvas")
+            // .append("svg")
             // .attr("id","canvas")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
@@ -618,7 +614,6 @@ var previewCsvUrl = function( csvUrl ) {
                 return y(d.value);
             })
             .attr("fill","steelblue")
-            // .attr("fill","url(#svgGradient)")
             .append("title")
             // .style("margin-left", "10px")   //space between bars
             .text(function(d){
@@ -706,8 +701,6 @@ var previewCsvUrl = function( csvUrl ) {
                // this part added for transition
 
 
-
-
                 var bar = d3.selectAll(".rectangle").data(selectAvg);
 
                 bar.enter().append('rect')
@@ -730,7 +723,6 @@ var previewCsvUrl = function( csvUrl ) {
                 bar.transition().duration(600)
                     .attr("y",function(d){return y(d.value);})
                     .attr("fill","steelblue")
-                    // .attr('fill','url(#svgGradient)')
                     .attr("height",function(d){return height -y(d.value)});
 
             });
@@ -778,31 +770,24 @@ var previewCsvUrl = function( csvUrl ) {
 
         function redraw_bar_gradient(missingCount){
 
-            console.log('bar gradient draw')
-
-            var gradient_bar = canvas.append("defs")
-            // var gradient_bar = canvas.append("svg:defs")
-            //     .append("svg:linearGradient")
-                .append('linearGradient')
-                .attr("id", "svgGradient")
+            // var gradient_bar = svg.append("svg:defs")
+            var gradient_bar = canvas.append("svg:defs")
+                .append("svg:linearGradient")
+                .attr("id", "gradient")
                 .attr("x1", "0%")
                 .attr("y1", "0%")
                 .attr("x2", "100%")
                 .attr("y2", "100%")
                 .attr("spreadMethod", "pad");
 
-            // gradient_bar.append("svg:stop")
-            gradient_bar.append('stop')
-                .attr('class','start')
+            gradient_bar.append("svg:stop")
                 .attr("offset", "0%")
-                .attr("stop-color", "white")
+                .attr("stop-color", "steelblue")
                 .attr("stop-opacity", 1);
 
-            gradient_bar.append('stop')
-            // gradient_bar.append("svg:stop")
-                .attr('class','end')
+            gradient_bar.append("svg:stop")
                 .attr("offset", "100%")
-                .attr("stop-color", "steelblue")
+                .attr("stop-color", "white")
                 .attr("stop-opacity", 1);
 
             canvas.selectAll("rectangle")
@@ -822,15 +807,13 @@ var previewCsvUrl = function( csvUrl ) {
                 .attr("y", function(d){
                     return y(d.value);
                 })
-                .attr("fill","url(#svgGradient)")
-                // .attr("fill","url(#gradient)")
+                .attr("fill","url(#gradient_bar)")
                 .append("title")
                 .text(function(d){
                     // return d.Name + " : " + d[selection];
                     // return d.Category + " : " + d[selection];
                     // return d.key + " : " + d.key;
                 });
-
 
         }// end of bar gradient
 
