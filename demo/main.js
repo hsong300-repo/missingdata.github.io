@@ -1,24 +1,40 @@
 
 
 // remove index randomly
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
+// function getRandomInt(min, max) {
+//     min = Math.ceil(min);
+//     max = Math.floor(max);
+//
+//     var removed_idx = [];
+//     var remove_num = parseInt(max * 0.2);
+//     console.log('how many',remove_num);
+//
+//     for(var i = 0; i < remove_num; i++){
+//         var idx = Math.floor(Math.random() * (max - min + 1)) + min;
+//         removed_idx.push(idx);
+//         //in order to removed repeated index
+//
+//
+//     }
+//     console.log('removed_idx',removed_idx);
+//     return removed_idx;
+//     // return Math.floor(Math.random() * (max - min + 1)) + min;
+// }
 
-    var removed_idx = [];
-    var remove_num = parseInt(max * 0.2);
-    console.log('how many',remove_num);
-
-    for(var i = 0; i < remove_num; i++){
-        var idx = Math.floor(Math.random() * (max - min + 1)) + min;
-        removed_idx.push(idx);
-        //in order to removed repeated index
-
-
+//remove index randomly without duplication
+function generateRan(data_len){
+    var max = parseInt(data_len*0.1);
+    var random = [];
+    for(var i = 0;i<max ; i++){
+        var temp = Math.floor(Math.random()*max);
+        if(random.indexOf(temp) == -1){ //if the array does not contain that index than push
+            random.push(temp);
+        }
+        else
+            i--;
     }
-    console.log('removed_idx',removed_idx);
-    return removed_idx;
-    // return Math.floor(Math.random() * (max - min + 1)) + min;
+    console.log(random)
+    return random
 }
 
 
@@ -473,7 +489,8 @@ var previewCsvUrl = function( csvUrl ) {
         // Create global variables here
         whiskey = dataset;
 
-        removed_idx = getRandomInt(0,whiskey.length-1);
+        // removed_idx = getRandomInt(0,whiskey.length-1);
+        removed_idx = generateRan(whiskey.length-1);
 
 
         // Create scales and other functions here
@@ -545,7 +562,6 @@ var previewCsvUrl = function( csvUrl ) {
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         // filter year
-        console.log('data',data)
         // var data = data.filter(function(d){return d.Year == '2012';});
         // Get every column value
         var elements = Object.keys(data[0])
@@ -561,6 +577,7 @@ var previewCsvUrl = function( csvUrl ) {
                 return +d[selection];});})
             .entries(data);
 
+        // console.log('avg',avg);
 
         var y = d3.scaleLinear()
             // .domain([0, d3.max(data, function(d){
@@ -630,6 +647,8 @@ var previewCsvUrl = function( csvUrl ) {
 
         removed_idx = getRandomInt(0,data.length-1);
 
+        total_missing = removed_idx.length;
+
         var f_data = data.filter(function(d,i){return removed_idx.includes(i);})
 
         var missingCount = d3.nest()
@@ -662,14 +681,18 @@ var previewCsvUrl = function( csvUrl ) {
             redraw_bar_pattern(missingCount);
         });
 
-        d3.selectAll(("input[value='bar_local']")).on("change", function() {
-            console.log('onchange bar local');
-            redraw_bar_local(missingCount);
+        d3.selectAll(("input[value='bar_missing']")).on("change", function() {
+            console.log('onchange bar missing');
+            redraw_bar_missing(total_missing);
         });
 
         d3.selectAll(("input[value='bar_sketch']")).on("change", function() {
             console.log('onchange bar sketch');
             redraw_bar_sketch(missingCount);
+        });
+        d3.selectAll(("input[value='bar_dash']")).on("change", function() {
+            console.log('onchange bar dash');
+            redraw_bar_dash(missingCount);
         });
 
 
@@ -704,10 +727,6 @@ var previewCsvUrl = function( csvUrl ) {
                 yAxis.scale(y);
 
                // this part added for transition
-
-
-
-
                 var bar = d3.selectAll(".rectangle").data(selectAvg);
 
                 bar.enter().append('rect')
@@ -734,7 +753,6 @@ var previewCsvUrl = function( csvUrl ) {
                     .attr("height",function(d){return height -y(d.value)});
 
             });
-
 
         selector.selectAll("option")
             .data(elements)
@@ -775,6 +793,38 @@ var previewCsvUrl = function( csvUrl ) {
                 });
 
         }// end of bar color
+
+        function redraw_bar_dash(missingCount){
+
+            canvas.selectAll("rectangle")
+            // .data(data)
+                .data(missingCount)
+                .enter()
+                .append("rect")
+                .attr("class","rectangle")
+                // .attr("width", width/data.length-5)
+                .attr("width", x.bandwidth()/2)
+                .attr("height", function(d){
+                    return height -y(d.value);
+                })
+                .attr("x", function(d, i){
+                    return x(d.key);
+                })
+                .attr("y", function(d){
+                    return y(d.value);
+                })
+                .attr("fill","white")
+                .attr('stroke','steelblue')
+                .style("stroke-dasharray", ("3, 3"))
+                // .attr("fill","url(#gradient)")
+                .append("title")
+                .text(function(d){
+                    // return d.Name + " : " + d[selection];
+                    // return d.Category + " : " + d[selection];
+                    // return d.key + " : " + d.key;
+                });
+
+        }// end of bar dash
 
         function redraw_bar_gradient(missingCount){
 
@@ -853,7 +903,8 @@ var previewCsvUrl = function( csvUrl ) {
                 .attr("y", function(d){
                     return y(d.value);
                 })
-                .attr("fill","url(#diagonal-stripe-2)")
+                // .attr("fill","url(#diagonal-stripe-2) #4682B4")
+                .attr("fill","url(#diagonal-stripes)")
                 // .attr("fill","url(#gradient)")
                 .append("title")
                 .text(function(d){
@@ -863,6 +914,52 @@ var previewCsvUrl = function( csvUrl ) {
                 });
 
         }// end of bar pattern
+
+        function redraw_bar_missing(total_missing){
+
+            var dataset = [total_missing]
+
+            canvas.selectAll("rectangle")
+            // .data(data)
+            //     .data(missingCount)
+                .data(dataset)
+                .enter()
+                .append("rect")
+                .attr("class","rectangle")
+                // .attr("width", width/data.length-5)
+                .attr("width", x.bandwidth())
+                .attr("height", function(d){
+                    return height - total_missing;
+                    // total_missing;
+                })
+                .attr("x", width+10)
+                // .attr("y", function(d){return d.value;})
+                .attr("y", total_missing)
+                .attr("fill","orange")
+                // .attr("fill","url(#gradient)")
+                .append("title")
+                .text(function(d){
+                    // return "unknown";
+                    // return d.Name + " : " + d[selection];
+                    // return d.Category + " : " + d[selection];
+                    // return d.key + " : " + d.key;
+                });
+
+            canvas.selectAll("text")
+                .data(dataset)
+                .enter()
+                .append("text")
+                .attr("class","label")
+                .text(function(d){
+                    return d;
+                })
+                .attr("x",0)
+                .attr("y",0)
+                .attr("font-size","11px")
+                .attr("fill","black")
+                .attr("text-anchor","middle");
+
+        }// end of bar missing
 
     }// end of the make_bar function
 
