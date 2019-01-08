@@ -1,25 +1,29 @@
 
 
 // remove index randomly
-// function getRandomInt(min, max) {
-//     min = Math.ceil(min);
-//     max = Math.floor(max);
-//
-//     var removed_idx = [];
-//     var remove_num = parseInt(max * 0.2);
-//     console.log('how many',remove_num);
-//
-//     for(var i = 0; i < remove_num; i++){
-//         var idx = Math.floor(Math.random() * (max - min + 1)) + min;
-//         removed_idx.push(idx);
-//         //in order to removed repeated index
-//
-//
-//     }
-//     console.log('removed_idx',removed_idx);
-//     return removed_idx;
-//     // return Math.floor(Math.random() * (max - min + 1)) + min;
-// }
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+
+    var removed_idx = [];
+    var remove_num = parseInt(max * 0.1);
+    console.log('how many',remove_num);
+
+    for(var i = 0; i < remove_num; i++){
+        var idx = Math.floor(Math.random() * (max - min + 1)) + min;
+        if( removed_idx.indexOf(idx) == -1){
+            removed_idx.push(idx);
+        }
+        else
+            i--;
+        //in order to removed repeated index
+
+
+    }
+    console.log('removed_idx',removed_idx);
+    return removed_idx;
+    // return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 //remove index randomly without duplication
 function generateRan(data_len){
@@ -33,7 +37,7 @@ function generateRan(data_len){
         else
             i--;
     }
-    console.log(random)
+    console.log('generate ran',random);
     return random
 }
 
@@ -489,8 +493,8 @@ var previewCsvUrl = function( csvUrl ) {
         // Create global variables here
         whiskey = dataset;
 
-        // removed_idx = getRandomInt(0,whiskey.length-1);
-        removed_idx = generateRan(whiskey.length-1);
+        removed_idx = getRandomInt(0,whiskey.length-1);
+        // removed_idx = generateRan(whiskey.length-1);
 
 
         // Create scales and other functions here
@@ -587,6 +591,19 @@ var previewCsvUrl = function( csvUrl ) {
             })])
             .range([height, 0]);
 
+        // y-axis on the right
+        var y1 = d3.scaleLinear()
+        // .domain([0, d3.max(data, function(d){
+        //     return +d[selection];
+            .domain([0,data.length])
+            .range([height, 0]);
+        var y1Axis = d3.axisRight(y1);
+
+        canvas.append("g")
+            .attr("transform", "translate( " + width + ", 0 )")
+            .attr("class", "y axis")
+            .call(y1Axis);
+        //end of the calling
 
         var x = d3.scaleBand()
         // .domain(data.map(function(d){ return d.Name;}))
@@ -645,7 +662,11 @@ var previewCsvUrl = function( csvUrl ) {
 
             });
 
-        removed_idx = getRandomInt(0,data.length-1);
+        // removed_idx = getRandomInt(0,data.length-1);
+        // console.log('whiskey legth',whiskey.length-1);
+        // console.log('data length',data.length-1);
+        // removed_idx = generateRan(whiskey.length-1);
+        removed_idx = getRandomInt(0, data.length-1);
 
         total_missing = removed_idx.length;
 
@@ -683,7 +704,7 @@ var previewCsvUrl = function( csvUrl ) {
 
         d3.selectAll(("input[value='bar_missing']")).on("change", function() {
             console.log('onchange bar missing');
-            redraw_bar_missing(total_missing);
+            redraw_bar_missing(total_missing,missingCount);
         });
 
         d3.selectAll(("input[value='bar_sketch']")).on("change", function() {
@@ -766,6 +787,8 @@ var previewCsvUrl = function( csvUrl ) {
 
         function redraw_bar_color(missingCount){
 
+
+
             canvas.selectAll("rectangle")
             // .data(data)
                 .data(missingCount)
@@ -795,6 +818,8 @@ var previewCsvUrl = function( csvUrl ) {
         }// end of bar color
 
         function redraw_bar_dash(missingCount){
+
+
 
             canvas.selectAll("rectangle")
             // .data(data)
@@ -827,6 +852,10 @@ var previewCsvUrl = function( csvUrl ) {
         }// end of bar dash
 
         function redraw_bar_gradient(missingCount){
+
+
+
+
 
             console.log('bar gradient draw')
 
@@ -886,6 +915,10 @@ var previewCsvUrl = function( csvUrl ) {
 
         function redraw_bar_pattern(missingCount){
 
+
+
+
+
             canvas.selectAll("rectangle")
             // .data(data)
                 .data(missingCount)
@@ -915,9 +948,38 @@ var previewCsvUrl = function( csvUrl ) {
 
         }// end of bar pattern
 
-        function redraw_bar_missing(total_missing){
+        function redraw_bar_missing(total_missing,missingCount){
 
-            var dataset = [total_missing]
+
+            var dataset = [total_missing];
+
+            //fill rect in steelblue to hide
+            canvas.selectAll("rectangle")
+            // .data(data)
+                .data(missingCount)
+                .enter()
+                .append("rect")
+                .attr("class","rectangle")
+                // .attr("width", width/data.length-5)
+                .attr("width", x.bandwidth()/2)
+                .attr("height", function(d){
+                    return height -y(d.value);
+                })
+                .attr("x", function(d, i){
+                    return x(d.key);
+                })
+                .attr("y", function(d){
+                    return y(d.value);
+                })
+                // .attr("fill","url(#diagonal-stripe-2) #4682B4")
+                .attr("fill","steelblue")
+                // .attr("fill","url(#gradient)")
+                .append("title")
+                .text(function(d){
+                    // return d.Name + " : " + d[selection];
+                    // return d.Category + " : " + d[selection];
+                    // return d.key + " : " + d.key;
+                });// fill it like this to hide
 
             canvas.selectAll("rectangle")
             // .data(data)
@@ -929,32 +991,28 @@ var previewCsvUrl = function( csvUrl ) {
                 // .attr("width", width/data.length-5)
                 .attr("width", x.bandwidth())
                 .attr("height", function(d){
-                    return height - total_missing;
+                    return total_missing;
                     // total_missing;
                 })
-                .attr("x", width+10)
+                .attr("x", width+30)
                 // .attr("y", function(d){return d.value;})
-                .attr("y", total_missing)
+                .attr("y", height-total_missing)
                 .attr("fill","orange")
                 // .attr("fill","url(#gradient)")
                 .append("title")
                 .text(function(d){
-                    // return "unknown";
+                    return "unknown";
                     // return d.Name + " : " + d[selection];
                     // return d.Category + " : " + d[selection];
                     // return d.key + " : " + d.key;
                 });
 
-            canvas.selectAll("text")
-                .data(dataset)
-                .enter()
-                .append("text")
+            // add text
+            canvas.append("text")
                 .attr("class","label")
-                .text(function(d){
-                    return d;
-                })
-                .attr("x",0)
-                .attr("y",0)
+                .text("unknown")
+                .attr("x",width+x.bandwidth()+15)
+                .attr("y",height+10)
                 .attr("font-size","11px")
                 .attr("fill","black")
                 .attr("text-anchor","middle");
