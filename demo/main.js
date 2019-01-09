@@ -523,7 +523,9 @@ var previewCsvUrl = function( csvUrl ) {
         //============this temporary commented
         // user preference message, make it work for other variables as well
         var attribute = "Price";
-        alert("You have " + missing_count + " missing values in attribute " + attribute);
+        // alert("You have " + missing_count + " missing values in attribute " + attribute);
+        alert("You have " + removed_idx.length + " missing values in attribute " + attribute);
+
 
         var userPrefernce;
         if (confirm("Do you want to exclude missing values from computation and the representation?")){
@@ -747,6 +749,7 @@ var previewCsvUrl = function( csvUrl ) {
 
                 yAxis.scale(y);
 
+
                // this part added for transition
                 var bar = d3.selectAll(".rectangle").data(selectAvg);
 
@@ -773,6 +776,8 @@ var previewCsvUrl = function( csvUrl ) {
                     // .attr('fill','url(#svgGradient)')
                     .attr("height",function(d){return height -y(d.value)});
 
+
+
             });
 
         selector.selectAll("option")
@@ -786,8 +791,6 @@ var previewCsvUrl = function( csvUrl ) {
             });
 
         function redraw_bar_color(missingCount){
-
-
 
             canvas.selectAll("rectangle")
             // .data(data)
@@ -818,8 +821,6 @@ var previewCsvUrl = function( csvUrl ) {
         }// end of bar color
 
         function redraw_bar_dash(missingCount){
-
-
 
             canvas.selectAll("rectangle")
             // .data(data)
@@ -852,10 +853,6 @@ var previewCsvUrl = function( csvUrl ) {
         }// end of bar dash
 
         function redraw_bar_gradient(missingCount){
-
-
-
-
 
             console.log('bar gradient draw')
 
@@ -914,10 +911,6 @@ var previewCsvUrl = function( csvUrl ) {
         }// end of bar gradient
 
         function redraw_bar_pattern(missingCount){
-
-
-
-
 
             canvas.selectAll("rectangle")
             // .data(data)
