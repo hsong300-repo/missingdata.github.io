@@ -171,7 +171,10 @@ function updateChart() {
     // Create and position scatterplot circles
     // User Enter, Update (don't need exit)
     var dots = chartG.selectAll('.dot')
+    // var dots = chartG.selectAll('.shapes')
         .data(whiskey);
+
+
 
     var dotsEnter = dots.enter()
         .append('g')
@@ -408,14 +411,60 @@ function updateChart() {
         var symbol = d3.symbol();
 
         // dotsEnter.append('circle')
-        dotsEnter.append('.point')
-        .style("fill","steelblue")
-            .attr("d",symbol.type(function(d,i){
-                if(removed_idx.includes(i)){
-                    return d3.symbolDiamond;
-                }
-            }))
+        // dotsEnter.append('circle')
+        // dotsEnter
+        //     .style("fill","steelblue")
+        //     .attr("d",symbol.type(function(d,i){
+        //         if(removed_idx.includes(i)){
+        //             return d3.symbolStar;
+        //         }
+        //         else{
+        //             return d3.symbolCircle;
+        //         }
+        //     }))
+        //     .attr('stroke','#000')
+        //     .attr('stoke-width',1)
+        //     .attr('r', 3);
+
+
+        dotsEnter.append('circle')
+            .filter(function(d,i){return removed_idx.includes(i)})
+            .style("fill","white")
+            // .style('opacity',0.0)
+            // .attr("d",symbol.type(function(d,i){
+            //     if(removed_idx.includes(i)){
+            //         return d3.symbolStar;
+            //     }
+            //     else{
+            //         return d3.symbolCircle;
+            //     }
+            // }))
+            // .attr('stroke','#000')
+            // .attr('stoke-width',1)
             .attr('r', 3);
+
+        dotsEnter.append('rect')
+            .filter(function(d,i){return removed_idx.includes(i)})
+            .style("fill","steelblue")
+            // .attr("d",symbol.type(function(d,i){
+            //     if(removed_idx.includes(i)){
+            //         return d3.symbolStar;
+            //     }
+            //     else{
+            //         return d3.symbolCircle;
+            //     }
+            // }))
+            .attr('stroke','#000')
+            .attr('width',4.5)
+            .attr('height',4.5)
+            .attr('stoke-width',1);
+
+
+
+
+            // .attr('r', 3);
+
+
 
         // Append a text to the ENTER selection
         dotsEnter.append('text')
@@ -593,7 +642,7 @@ var previewCsvUrl = function( csvUrl ) {
             })])
             .range([height, 0]);
 
-        // y-axis on the right
+        // ***y-axis on the right
         var y1 = d3.scaleLinear()
         // .domain([0, d3.max(data, function(d){
         //     return +d[selection];
@@ -605,7 +654,7 @@ var previewCsvUrl = function( csvUrl ) {
             .attr("transform", "translate( " + width + ", 0 )")
             .attr("class", "y axis")
             .call(y1Axis);
-        //end of the calling
+        //***end of the calling
 
         var x = d3.scaleBand()
         // .domain(data.map(function(d){ return d.Name;}))
