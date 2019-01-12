@@ -174,7 +174,16 @@ function updateChart() {
     // var dots = chartG.selectAll('.shapes')
         .data(whiskey);
 
-
+    //** adjustment in shapes**
+    // var symbol = d3.symbol();
+    //
+    //
+    // dots.attr("d", symbol.type(function(d,i){if(removed_idx.includes(i)){ return d3.symbolCross} else { return d3.symbolDiamond}}))
+    //     .attr('fill', "teal")
+    //     .attr('stroke','#000')
+    //     .attr('stroke-width',1)
+    //     .attr('transform',function(d){ return "translate("+xScale(d.price)+","+yScale(d.rating)+")"; });
+    // //*** end here
 
     var dotsEnter = dots.enter()
         .append('g')
