@@ -152,3 +152,42 @@ button {
 circle {
     fill: #ff6600;
 }
+
+/*error bar cap and encodings add*/
+.error-line {
+    /*stroke: #b30059;*/
+    stroke:#000;
+    stroke-dasharray: 2,2;
+}
+
+.error-cap {
+    /*stroke: #b30059;*/
+    stroke:#000;
+    stroke-width: 2px;
+    stroke-type: solid;
+}
+
+.tooltip {
+    position: absolute;
+    height: auto;
+    width: auto;
+    padding: 15px;
+    background: #660033;
+    color: white;
+    font-family: Monospace, Serif;
+}
+
+.tooltip:after {
+    content: " ";
+    position: absolute;
+    top: 50%;
+    right: 100%; /* To the left of the tooltip */
+    margin-top: -10px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent #660033 transparent transparent;
+}
+
+.plot-bg {
+    fill: #fff0e6;
+}

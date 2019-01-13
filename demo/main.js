@@ -150,10 +150,6 @@ var transitionScale = d3.transition()
     .duration(600)
     .ease(d3.easeLinear);
 
-
-
-
-
 function updateChart() {
     // **** Draw and Update your chart here ****
     // Update the scales based on new data attributes
@@ -310,6 +306,38 @@ function updateChart() {
 
 
     }// end of local
+
+    function redraw_error(){
+        // Add Error Line
+
+
+        // Add Scatter Points
+        dotsEnter.append('circle')
+            .style("fill", function(d,i) {
+                if(removed_idx.includes(i)){
+                    return 'orange'; //lightskyblue
+                }else{
+                    return "steelblue";
+                }})
+            .attr('r', 3);
+
+        // Add Error Line
+
+
+        // ENTER + UPDATE selections - bindings that happen on all updateChart calls
+        dots.merge(dotsEnter)
+            .transition() // Add transition - this will interpolate the translate() on any changes
+            .duration(750)
+            .attr('transform', function(d) {
+                // Transform the group based on x and y property
+                var tx = xScale(d[chartScales.x]);
+                var ty = yScale(d[chartScales.y]);
+                return 'translate('+[tx, ty]+')';
+            });
+
+
+
+    }// end of scatter error
 
 
     function redraw_color(){
@@ -726,11 +754,13 @@ var previewCsvUrl = function( csvUrl ) {
         // console.log('whiskey legth',whiskey.length-1);
         // console.log('data length',data.length-1);
         // removed_idx = generateRan(whiskey.length-1);
-        removed_idx = getRandomInt(0, data.length-1);
+
+        // removed_idx = getRandomInt(0, data.length-1);
+        removed_idx = [77, 32, 255, 174, 152, 226, 18, 100, 142, 267, 10, 191, 248, 40, 97, 34, 276, 163, 83, 203, 155, 261, 14, 194, 129, 71, 145, 62]
 
         total_missing = removed_idx.length;
 
-        var f_data = data.filter(function(d,i){return removed_idx.includes(i);})
+        var f_data = data.filter(function(d,i){return removed_idx.includes(i);});
 
         var missingCount = d3.nest()
             .key(function(d){return d.Category})
@@ -753,7 +783,7 @@ var previewCsvUrl = function( csvUrl ) {
 
         d3.selectAll(("input[value='bar_error']")).on("change", function() {
             console.log('onchange bar error');
-            redraw_bar_error(missingCount);
+            redraw_bar_error(missingCount,avg);
         });
 
         d3.selectAll(("input[value='bar_pattern']")).on("change", function() {
@@ -877,6 +907,121 @@ var previewCsvUrl = function( csvUrl ) {
                 });
 
         }// end of bar color
+
+        function redraw_bar_error(missingCount,avg){
+            // console.log('selectAvg',avg.map(function(d){return d.value}));
+            var vals = avg.map(function(d){return d.value});
+
+            var std = math.std(vals);
+            // console.log('std',std);
+
+            canvas.selectAll("rectangle")
+            // .data(data)
+                .data(missingCount)
+                .enter()
+                .append("rect")
+                .attr("class","rectangle")
+                // .attr("width", width/data.length-5)
+                .attr("width", x.bandwidth()/2)
+                .attr("height", function(d){
+                    return height -y(d.value);
+                })
+                .attr("x", function(d, i){
+                    return x(d.key);
+                })
+                .attr("y", function(d){
+                    return y(d.value);
+                })
+                .attr("fill","#87CEFA")
+                // .attr("fill","url(#gradient)")
+                .append("title")
+                .text(function(d){
+                    // return d.Name + " : " + d[selection];
+                    // return d.Category + " : " + d[selection];
+                    // return d.key + " : " + d.key;
+                });
+
+
+            // Add Error Line
+            // canvas.append("g").selectAll("line")
+            canvas.append("g").selectAll(".rectangle")
+                .data(avg).enter()
+                .append("line")
+                .attr("class", "error-line")
+                .attr("x1", function(d) {
+                    // return x(d.key);
+                    return x(d.key) + x.bandwidth()/2;
+                })
+                .attr("y1", function(d) {
+                    return y(d.value + std);
+                })
+                .attr("x2", function(d) {
+                    // return x(d.key);
+                    return x(d.key) + x.bandwidth()/2;
+                })
+                .attr("y2", function(d) {
+                    return y(d.value - std);
+                });
+
+            // add error top cap
+            canvas.append("g").selectAll(".rectangle")
+                .data(avg).enter()
+                .append("line")
+                .attr("class", "error-cap")
+                .attr("x1", function(d) {
+                    return x(d.key)-3 + x.bandwidth()/2;
+                })
+                .attr("y1", function(d) {
+                    return y(d.value + std);
+                })
+                .attr("x2", function(d) {
+                    return x(d.key)+3 + x.bandwidth()/2;
+                })
+                .attr("y2", function(d) {
+                    return y(d.value + std);
+                });
+
+            // add error bottom cap
+            canvas.append("g").selectAll(".rectangle")
+                .data(avg).enter()
+                .append("line")
+                .attr("class", "error-cap")
+                .attr("x1", function(d) {
+                    return x(d.key)-3 + x.bandwidth()/2;
+                })
+                .attr("y1", function(d) {
+                    return y(d.value - std);
+                })
+                .attr("x2", function(d) {
+                    return x(d.key) + 3 + x.bandwidth()/2;
+                })
+                .attr("y2", function(d) {
+                    return y(d.value - std);
+                });
+
+
+
+            // // Add Error Bottom Cap
+            // canvas.append("g").selectAll(".rectangle")
+            //     .data(selectAvg).enter()
+            //     .append("line")
+            //     .attr("class", "error-cap")
+            //     .attr("x1", function(d) {
+            //         return xScale(d.key) - 3;
+            //     })
+            //     .attr("y1", function(d) {
+            //         return yScale(d.value - 3);
+            //     })
+            //     .attr("x2", function(d) {
+            //         return xScale(d.key) + 3;
+            //     })
+            //     .attr("y2", function(d) {
+            //         return yScale(d.value - 3);
+            //     });
+
+
+
+        }// end of bars with error bars but add it on the computed data
 
         function redraw_bar_dash(missingCount){
 
@@ -1119,4 +1264,5 @@ d3.select("#cRight")
 
 
 // Initialize with csv file from server, this is the deafult
-previewCsvUrl("./whiskey.csv");
+// previewCsvUrl("./whiskey.csv");
+previewCsvUrl("./whiskey_global.csv");
