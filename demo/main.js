@@ -170,6 +170,7 @@ function updateChart() {
     // var dots = chartG.selectAll('.shapes')
         .data(whiskey);
 
+
     //** adjustment in shapes**
     // var symbol = d3.symbol();
     //
@@ -310,18 +311,60 @@ function updateChart() {
     function redraw_error(){
         // Add Error Line
 
+        // dotsEnter.exit().remove();
 
-        // Add Scatter Points
-        dotsEnter.append('circle')
-            .style("fill", function(d,i) {
-                if(removed_idx.includes(i)){
-                    return 'orange'; //lightskyblue
-                }else{
-                    return "steelblue";
-                }})
-            .attr('r', 3);
+        // console.log('whiskye data',whiskey);
+        // console.log('whiskey keys',Object.keys(whiskey));
+        //Add Scatter Points
+        // dotsEnter.append('circle')
+        //     .style("fill", function(d,i) {
+        //         if(removed_idx.includes(i)){
+        //             return 'orange'; //lightskyblue
+        //         }else{
+        //             return "steelblue";
+        //         }})
+        //     .attr('r', 3);
 
         // Add Error Line
+
+        // var std = math.std(vals);
+
+        chartG.append("g").selectAll("line")
+            // .enter()
+            .data(whiskey).enter()
+            // .filter(function(d,i){
+            //     console.log('error, removed idx',removed_idx)
+            //     return removed_idx.includes(i)})
+            // // .filter()
+            .append("line")
+            .attr("class", "error-line")
+            .attr("x1", function(d) {
+                return xScale(d[chartScales.x]);
+            })
+            .attr("y1", function(d) {
+                return yScale(d[chartScales.y]+1);
+            })
+            .attr("x2", function(d) {
+                return xScale(d[chartScales.x]);
+            })
+            .attr("y2", function(d) {
+                return yScale(d[chartScales.y]-1);
+            });
+
+
+        // // Add Error Line
+        // dotsEnter.append("g").attr("class", "scatter")
+        //     .selectAll("circle")
+        //     .data(whiskey).enter()
+        //     .append("circle")
+        //     .style('fill','orange')
+        //     .attr("cx", function(d) {
+        //         return xScale(d[chartScales.x]);
+        //     })
+        //     .attr("cy", function(d) {
+        //         return yScale(d[chartScales.y]);
+        //     });
+
 
 
         // ENTER + UPDATE selections - bindings that happen on all updateChart calls
@@ -334,6 +377,16 @@ function updateChart() {
                 var ty = yScale(d[chartScales.y]);
                 return 'translate('+[tx, ty]+')';
             });
+
+        // dots.merge(dotsEnter)
+        //     .transition() // Add transition - this will interpolate the translate() on any changes
+        //     .duration(750)
+        //     .attr('transform', function(d) {
+        //         // Transform the group based on x and y property
+        //         var tx = xScale(d[chartScales.x]);
+        //         var ty = yScale(d[chartScales.y]);
+        //         return 'translate('+[tx, ty]+')';
+        //     });
 
 
 
@@ -356,6 +409,8 @@ function updateChart() {
             .text(function(d) {
                 return d.Name;
             });
+
+
 
         // ENTER + UPDATE selections - bindings that happen on all updateChart calls
         // dots.merge(dotsEnter)
@@ -399,6 +454,8 @@ function updateChart() {
             .text(function(d) {
                 return d.Name;
             });
+
+        // dotsEnter.exit().remove();
 
         // ENTER + UPDATE selections - bindings that happen on all updateChart calls
         // dots.merge(dotsEnter)
@@ -579,7 +636,8 @@ var previewCsvUrl = function( csvUrl ) {
         // Create global variables here
         whiskey = dataset;
 
-        removed_idx = getRandomInt(0,whiskey.length-1);
+        // removed_idx = getRandomInt(0,whiskey.length-1);
+        removed_idx = [77, 32, 255, 174, 152, 226, 18, 100, 142, 267, 10, 191, 248, 40, 97, 34, 276, 163, 83, 203, 155, 261, 14, 194, 129, 71, 145, 62]
         // removed_idx = generateRan(whiskey.length-1);
 
 
@@ -998,29 +1056,6 @@ var previewCsvUrl = function( csvUrl ) {
                 .attr("y2", function(d) {
                     return y(d.value - std);
                 });
-
-
-
-            // // Add Error Bottom Cap
-            // canvas.append("g").selectAll(".rectangle")
-            //     .data(selectAvg).enter()
-            //     .append("line")
-            //     .attr("class", "error-cap")
-            //     .attr("x1", function(d) {
-            //         return xScale(d.key) - 3;
-            //     })
-            //     .attr("y1", function(d) {
-            //         return yScale(d.value - 3);
-            //     })
-            //     .attr("x2", function(d) {
-            //         return xScale(d.key) + 3;
-            //     })
-            //     .attr("y2", function(d) {
-            //         return yScale(d.value - 3);
-            //     });
-
-
-
         }// end of bars with error bars but add it on the computed data
 
         function redraw_bar_dash(missingCount){
