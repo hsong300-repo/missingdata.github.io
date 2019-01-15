@@ -773,7 +773,7 @@ var previewCsvUrl = function( csvUrl ) {
 
         canvas.append("g")
             .attr("transform", "translate( " + width + ", 0 )")
-            .attr("class", "y axis")
+            .attr("class", "y1 axis")
             .call(y1Axis);
         //***end of the calling
 
@@ -941,14 +941,6 @@ var previewCsvUrl = function( csvUrl ) {
                 d3.selectAll("g.y.axis")
                     .transition()
                     .call(yAxis);
-
-                bar.transition().duration(600)
-                    .attr("y",function(d){return y(d.value);})
-                    .attr("fill","steelblue")
-                    // .attr('fill','url(#svgGradient)')
-                    .attr("height",function(d){return height -y(d.value)});
-
-
 
             });
 
@@ -1279,10 +1271,10 @@ var previewCsvUrl = function( csvUrl ) {
     }// end of the make_bar function
 
     // this is the preview part, that shows the preview of the data
-    d3.csv( csvUrl, function( rows ) {
-        d3.select("div#preview").html(
-            "<b>First row:</b><br/>" + rowToHtml( rows[0] ));
-    })
+    // d3.csv( csvUrl, function( rows ) {
+    //     d3.select("div#preview").html(
+    //         "<b>First row:</b><br/>" + rowToHtml( rows[0] ));
+    // })
 };
 
 
