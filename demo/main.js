@@ -9,7 +9,7 @@ function getRandomInt(min, max) {
 
     for(var i = 0; i < remove_num; i++){
         var idx = Math.floor(Math.random() * (max - min + 1)) + min;
-        if( removed_idx.indexOf(idx) == -1){
+        if(removed_idx.indexOf(idx) == -1){
             removed_idx.push(idx);
         }
         else
@@ -39,13 +39,16 @@ function generateRan(data_len){
     return random
 }
 
-
-
 // Global functions called when select elements changed
 function onXScaleChanged() {
     var select = d3.select('#xScaleSelect').node();
     // Get current value of select element, save to global chartScales
     chartScales.x = select.options[select.selectedIndex].value;
+
+    console.log('on xScale changed');
+    //this one works temporarily
+    dots_chart.remove().exit();
+    // dotsEnter.remove().exit();
 
     // Update chart
     updateChart();
@@ -55,6 +58,10 @@ function onYScaleChanged() {
     var select = d3.select('#yScaleSelect').node();
     // Get current value of select element, save to global chartScales
     chartScales.y = select.options[select.selectedIndex].value;
+
+    console.log('on yScale changed');
+    dots_chart.remove().exit();
+    // dotsEnter.remove().exit();
 
     // Update chart
     updateChart();
@@ -75,7 +82,6 @@ function drawBar() {
     document.getElementById('scatter_radio').style.display = "none";
     document.getElementById('scatter_view').style.display = "none";
     // document.getElementById('bar_vis').style.display = "none";
-
 
 }
 
@@ -115,12 +121,58 @@ function glob_avg(val,rand_idx){
     return new_arr;
 }
 
+// d3.selectAll(("input[value='color']")).on("change", function() {
+//     console.log('onchange color');
+//     redraw_color();
+// });
+//
+// function redraw_color(){
+//
+//     dotsEnter
+//         .append('circle')
+//         // .data(whiskey).enter()
+//         // .attr('cx',function(d){xScale(d[chartScales.x]);})
+//         // .attr('cy', function(d){yScale(d[chartScales.y]);})
+//         .style("fill", function(d,i) {
+//             if(removed_idx.includes(i)){
+//                 return '#87CEFA'; //lightskyblue
+//             }else{
+//                 return "steelblue";
+//             }})
+//         .attr('r', 3);
+//
+//     chartG.append("g").attr('class',"Scatter")
+//         .selectAll("circle")
+//         .data(whiskey).enter()
+//         .append('circle')
+//         .attr("cx", function(d) {
+//                     return xScale(d[chartScales.x]);})
+//         .attr("cy", function(d) {
+//             return yScale(d[chartScales.y]);})
+//                 .attr('r',4);
+//
+//     // chartG.selectAll(".dot")
+//     // // .enter()
+//     //     .data(whiskey).enter()
+//     //     .filter(function(d,i){ return removed_idx.includes(i)})
+//     //     // // .filter()
+//     //     .append("circle")
+//     //     .attr("cx", function(d) {
+//     //         return xScale(d[chartScales.x]);
+//     //     })
+//     //     .attr("cy", function(d) {
+//     //         // return yScale(d[chartScales.y]+1);
+//     //         return yScale(0);
+//     //     })
+//     //     .attr('r', 4)
+//     //     .style("fill",'#87CEFA');
+//
+// }// end of color
 
 
 // var svg = d3.select('svg');
 var svg = d3.select('svg');
 // var svg = d3.select('scatter_canvas').append('svg');
-
 
 
 // Get layout parameters
@@ -149,6 +201,8 @@ var transitionScale = d3.transition()
     .ease(d3.easeLinear);
 
 function updateChart() {
+
+    console.log('upatechart');
     // **** Draw and Update your chart here ****
     // Update the scales based on new data attributes
     yScale.domain(domainMap[chartScales.y]).nice();
@@ -164,23 +218,13 @@ function updateChart() {
 
     // Create and position scatterplot circles
     // User Enter, Update (don't need exit)
-    var dots = chartG.selectAll('.dot')
+    dots = chartG.selectAll('.dot')
+    // var dots = chartG.selectAll('.dot')
     // var dots = chartG.selectAll('.shapes')
         .data(whiskey);
 
-
-    //** adjustment in shapes**
-    // var symbol = d3.symbol();
-    //
-    //
-    // dots.attr("d", symbol.type(function(d,i){if(removed_idx.includes(i)){ return d3.symbolCross} else { return d3.symbolDiamond}}))
-    //     .attr('fill', "teal")
-    //     .attr('stroke','#000')
-    //     .attr('stroke-width',1)
-    //     .attr('transform',function(d){ return "translate("+xScale(d.price)+","+yScale(d.rating)+")"; });
-    // //*** end here
-
-    var dotsEnter = dots.enter()
+    // var dotsEnter = dots.enter()
+    dotsEnter = dots.enter()
         .append('g')
         .attr('class', 'dot')
         // .attr("fill","steelblue")
@@ -206,6 +250,7 @@ function updateChart() {
                 .style('stroke', 'none');
         });
 
+
     // Append a circle to the ENTER selection
     // dotsEnter.append('circle')
     //     .attr('r', 3);
@@ -214,7 +259,6 @@ function updateChart() {
         // .attr("fill","steelblue")
         .attr('r', 3);
 
-
     // Append a text to the ENTER selection
     dotsEnter.append('text')
         .attr('y', -10)
@@ -222,29 +266,37 @@ function updateChart() {
             return d.Name;
         });
 
-    // ENTER + UPDATE selections - bindings that happen on all updateChart calls
-    dots.merge(dotsEnter)
-        .transition() // Add transition - this will interpolate the translate() on any changes
-        .duration(750)
-        .attr('transform', function(d) {
-            // Transform the group based on x and y property
-            var tx = xScale(d[chartScales.x]);
-            var ty = yScale(d[chartScales.y]);
-            return 'translate('+[tx, ty]+')';
-        });
+    // dots_chart = chartG.append("g").attr('class', "Scatter")
+    //     .selectAll("circle")
+    //     .data(whiskey).enter()
 
-    // if the radio button is clicked
-    //color clicked
-    // dotsEnter.selectAll(("input[value='color']")).on("change", function() {
     d3.selectAll(("input[value='color']")).on("change", function() {
         console.log('onchange color');
-        //work
         redraw_color();
     });
 
+
+
+        // chartG.selectAll(".dot")
+        // // .enter()
+        //     .data(whiskey).enter()
+        //     .filter(function(d,i){ return removed_idx.includes(i)})
+        //     // // .filter()
+        //     .append("circle")
+        //     .attr("cx", function(d) {
+        //         return xScale(d[chartScales.x]);
+        //     })
+        //     .attr("cy", function(d) {
+        //         // return yScale(d[chartScales.y]+1);
+        //         return yScale(0);
+        //     })
+        //     .attr('r', 4)
+        //     .style("fill",'#87CEFA');
+
+    // }// end of color
+
     d3.selectAll(("input[value='gradient']")).on("change", function() {
         console.log('onchange gradient');
-        //work
         redraw_gradient();
     });
 
@@ -255,7 +307,6 @@ function updateChart() {
 
     d3.selectAll(("input[value='pattern']")).on("change", function() {
         console.log('onchange pattern count');
-        //work
         redraw_pattern();
     });
 
@@ -271,343 +322,397 @@ function updateChart() {
 
     d3.selectAll(("input[value='shape']")).on("change", function() {
         console.log('onchange shape');
-        //not work
         redraw_shape();
     });
 
-    function redraw_local(){
-        // add more ticks
 
-        dotsEnter.append('circle')
-            .style("fill", function(d,i) {
-                if(removed_idx.includes(i)){
-                    return 'white'; //lightskyblue
-                }else{
+    // ENTER + UPDATE selections - bindings that happen on all updateChart calls
+    dots.merge(dotsEnter)
+        .transition() // Add transition - this will interpolate the translate() on any changes
+        .duration(750)
+        .attr('transform', function(d) {
+            console.log('this gets called merge');
+            // Transform the group based on x and y property
+            var tx = xScale(d[chartScales.x]);
+            var ty = yScale(d[chartScales.y]);
+            return 'translate('+[tx, ty]+')';
+        });
+
+
+
+    // if the radio button is clicked
+    //color clicked
+    // dotsEnter.selectAll(("input[value='color']")).on("change", function() {
+    // d3.selectAll(("input[value='color']")).on("change", function() {
+    //     console.log('onchange color');
+    //     redraw_color();
+    //
+    // });
+    function redraw_color() {
+
+        dotsEnter
+            .append('circle')
+            // .data(whiskey).enter()
+            // .attr('cx',function(d){xScale(d[chartScales.x]);})
+            // .attr('cy', function(d){yScale(d[chartScales.y]);})
+            .style("fill", function (d, i) {
+                if (removed_idx.includes(i)) {
+                    return '#87CEFA'; //lightskyblue
+                } else {
                     return "steelblue";
-                }})
+                }
+            })
             .attr('r', 3);
 
-        // Append a text to the ENTER selection
-        dotsEnter.append('text')
-            .attr('y', -10)
-            .text(function(d) {
-                return d.Name;
-            });
 
-        chartG.append("g").selectAll("line")
-        // .enter()
+        dots_chart = chartG.append("g").attr('class', "Scatter")
+            .selectAll("circle")
             .data(whiskey).enter()
-        .filter(function(d,i){ return removed_idx.includes(i)})
-        // // .filter()
-            .append("line")
-            .attr("class", "error-line")
-            .attr("x1", function(d) {
+            .append('circle')
+            .filter(function (d, i) {
+                return removed_idx.includes(i)
+            })
+            .style("fill", '#87CEFA')
+            .attr("cx", function (d) {
                 return xScale(d[chartScales.x]);
             })
-            .attr("y1", function(d) {
-                // return yScale(d[chartScales.y]+1);
-                return yScale(0);
+            .attr("cy", function (d) {
+                return yScale(d[chartScales.y]);
             })
-            .attr("x2", function(d) {
-                return xScale(d[chartScales.x]);
-            })
-            .attr("y2", function(d) {
-                // return yScale(d[chartScales.y]-1);
-                return yScale(0-0.6);
-            });
+            .attr('r', 4);
 
+        // change = dots_chart.enter();
+        // // chartG.exit().remove();
+        //
+        // dots_chart.merge(change)
+        // dots.merge(dotsEnter)
+        //     .transition() // Add transition - this will interpolate the translate() on any changes
+        //     .duration(750)
+        //     .attr('transform', function (d) {
+        //         console.log('this gets called merge');
+        //         // Transform the group based on x and y property
+        //         var tx = xScale(d[chartScales.x]);
+        //         var ty = yScale(d[chartScales.y]);
+        //         return 'translate(' + [tx, ty] + ')';
+        //     });
 
+        }// end of color
 
-        // local_axis.selectAll("text").remove();
+        function redraw_local() {
+            // add more ticks
+            dotsEnter.append('circle')
+                .style("fill", function (d, i) {
+                    if (removed_idx.includes(i)) {
+                        return 'white'; //lightskyblue
+                    } else {
+                        return "steelblue";
+                    }
+                })
+                .attr('r', 3);
 
-        // ENTER + UPDATE selections - bindings that happen on all updateChart calls
-        dots.merge(dotsEnter)
-            .transition() // Add transition - this will interpolate the translate() on any changes
-            .duration(750)
-            .attr('transform', function(d) {
-                // Transform the group based on x and y property
-                var tx = xScale(d[chartScales.x]);
-                var ty = yScale(d[chartScales.y]);
-                return 'translate('+[tx, ty]+')';
-            });
+            // Append a text to the ENTER selection
+            // dotsEnter.append('text')
+            //     .attr('y', -10)
+            //     .text(function(d) {
+            //         return d.Name;
+            //     });
 
-
-    }// end of local
-
-    function redraw_error(){
-        // Add Error Line
-
-        // dotsEnter.exit().remove();
-
-        // console.log('whiskye data',whiskey);
-        // console.log('whiskey keys',Object.keys(whiskey));
-        //Add Scatter Points
-        // dotsEnter.append('circle')
-        //     .style("fill", function(d,i) {
-        //         if(removed_idx.includes(i)){
-        //             return 'orange'; //lightskyblue
-        //         }else{
-        //             return "steelblue";
-        //         }})
-        //     .attr('r', 3);
-
-        // Add Error Line
-
-        // var std = math.std(vals);
-
-        chartG.append("g").selectAll("line")
+            chartG.append("g").selectAll("line")
             // .enter()
-            .data(whiskey).enter()
+                .data(whiskey).enter()
+                .filter(function (d, i) {
+                    return removed_idx.includes(i)
+                })
+                // // .filter()
+                .append("line")
+                .attr("class", "error-line")
+                .attr("x1", function (d) {
+                    return xScale(d[chartScales.x]);
+                })
+                .attr("y1", function (d) {
+                    // return yScale(d[chartScales.y]+1);
+                    return yScale(0);
+                })
+                .attr("x2", function (d) {
+                    return xScale(d[chartScales.x]);
+                })
+                .attr("y2", function (d) {
+                    // return yScale(d[chartScales.y]-1);
+                    return yScale(0 - 0.6);
+                });
+
+
+            // local_axis.selectAll("text").remove();
+
+            // ENTER + UPDATE selections - bindings that happen on all updateChart calls
+            dots.merge(dotsEnter)
+                .transition() // Add transition - this will interpolate the translate() on any changes
+                .duration(750)
+                .attr('transform', function (d) {
+                    // Transform the group based on x and y property
+                    var tx = xScale(d[chartScales.x]);
+                    var ty = yScale(d[chartScales.y]);
+                    return 'translate(' + [tx, ty] + ')';
+                });
+
+
+        }// end of local
+
+        function redraw_error() {
+            // Add Error Line
+
+            // dotsEnter.exit().remove();
+
+            // console.log('whiskye data',whiskey);
+            // console.log('whiskey keys',Object.keys(whiskey));
+            //Add Scatter Points
+            // dotsEnter.append('circle')
+            //     .style("fill", function(d,i) {
+            //         if(removed_idx.includes(i)){
+            //             return 'orange'; //lightskyblue
+            //         }else{
+            //             return "steelblue";
+            //         }})
+            //     .attr('r', 3);
+
+            // Add Error Line
+
+            // var std = math.std(vals);
+
+            chartG.append("g").selectAll("line")
+            // .enter()
+                .data(whiskey).enter()
             // .filter(function(d,i){
             //     console.log('error, removed idx',removed_idx)
             //     return removed_idx.includes(i)})
             // // .filter()
-            .append("line")
-            .attr("class", "error-line")
-            .attr("x1", function(d) {
-                return xScale(d[chartScales.x]);
-            })
-            .attr("y1", function(d) {
-                return yScale(d[chartScales.y]+1);
-            })
-            .attr("x2", function(d) {
-                return xScale(d[chartScales.x]);
-            })
-            .attr("y2", function(d) {
-                return yScale(d[chartScales.y]-1);
-            });
+                .append("line")
+                .attr("class", "error-line")
+                .attr("x1", function (d) {
+                    return xScale(d[chartScales.x]);
+                })
+                .attr("y1", function (d) {
+                    return yScale(d[chartScales.y] + 1);
+                })
+                .attr("x2", function (d) {
+                    return xScale(d[chartScales.x]);
+                })
+                .attr("y2", function (d) {
+                    return yScale(d[chartScales.y] - 1);
+                });
+
+            // ENTER + UPDATE selections - bindings that happen on all updateChart calls
+            // dots.merge(chartG)
+            dots.merge(dotsEnter)
+                .transition() // Add transition - this will interpolate the translate() on any changes
+                .duration(750)
+                .attr('transform', function (d) {
+                    // Transform the group based on x and y property
+                    var tx = xScale(d[chartScales.x]);
+                    var ty = yScale(d[chartScales.y]);
+                    return 'translate(' + [tx, ty] + ')';
+                });
+
+        }// end of scatter error
 
 
-        // // Add Error Line
-        // dotsEnter.append("g").attr("class", "scatter")
-        //     .selectAll("circle")
-        //     .data(whiskey).enter()
-        //     .append("circle")
-        //     .style('fill','orange')
-        //     .attr("cx", function(d) {
-        //         return xScale(d[chartScales.x]);
-        //     })
-        //     .attr("cy", function(d) {
-        //         return yScale(d[chartScales.y]);
-        //     });
+        // function redraw_color(dotsEnter){
+        //
+        //     dotsEnter
+        //         .append('circle')
+        //         // .data(whiskey).enter()
+        //         // .attr('cx',function(d){xScale(d[chartScales.x]);})
+        //         // .attr('cy', function(d){yScale(d[chartScales.y]);})
+        //         .style("fill", function(d,i) {
+        //             if(removed_idx.includes(i)){
+        //                 return '#87CEFA'; //lightskyblue
+        //             }else{
+        //                 return "steelblue";
+        //             }})
+        //         .attr('r', 3);
+        //
+        //
+        //     //
+        //     // // Append a text to the ENTER selection
+        //     // dotsEnter.append('text')
+        //     //     .attr('y', -10)
+        //     //     .text(function(d) {
+        //     //         return d.Name;
+        //     //     });
+        //
+        // }// end of color
+
+        function redraw_gradient() {
+
+            var radialGradient = svg.append("defs")
+                .append("radialGradient")
+                .attr("id", "radial-gradient");
+
+            radialGradient.append("stop")
+                .attr("offset", "0%")
+                .attr("stop-color", "#fff");
+
+            radialGradient.append("stop")
+                .attr("offset", "100%")
+                .attr("stop-color", "steelblue");
+
+            // dots.merge(dotsEnter)
+            //     .transition()
+            //     .duration(750)
+            //     .style("fill", function(d,i) {
+            //                 if(removed_idx.includes(i)){
+            //                     return 'url(#radial-gradient)'; //lightskyblue
+            //                 }else{
+            //                     return "steelblue";
+            //                 }})
+            //     .attr('transform', function(d) {
+            //             // Transform the group based on x and y property
+            //             var tx = xScale(d[chartScales.x]);
+            //             var ty = yScale(d[chartScales.y]);
+            //             return 'translate('+[tx, ty]+')';
+            //         });
 
 
+            dotsEnter.append('circle')
+                .style("fill", function (d, i) {
+                    if (removed_idx.includes(i)) {
+                        return 'url(#radial-gradient)'; //lightskyblue
+                    } else {
+                        return "steelblue";
+                    }
+                })
+                .attr('r', 3);
 
-        // ENTER + UPDATE selections - bindings that happen on all updateChart calls
-        dots.merge(dotsEnter)
-            .transition() // Add transition - this will interpolate the translate() on any changes
-            .duration(750)
-            .attr('transform', function(d) {
-                // Transform the group based on x and y property
-                var tx = xScale(d[chartScales.x]);
-                var ty = yScale(d[chartScales.y]);
-                return 'translate('+[tx, ty]+')';
-            });
+            // Append a text to the ENTER selection
+            // dotsEnter.append('text')
+            //     .attr('y', -10)
+            //     .text(function(d) {
+            //         return d.Name;
+            //     });
 
-        // dots.merge(dotsEnter)
-        //     .transition() // Add transition - this will interpolate the translate() on any changes
-        //     .duration(750)
-        //     .attr('transform', function(d) {
-        //         // Transform the group based on x and y property
-        //         var tx = xScale(d[chartScales.x]);
-        //         var ty = yScale(d[chartScales.y]);
-        //         return 'translate('+[tx, ty]+')';
-        //     });
+            // dotsEnter.exit().remove();
 
+            // ENTER + UPDATE selections - bindings that happen on all updateChart calls
+            // dots.merge(dotsEnter)
+            //     .transition() // Add transition - this will interpolate the translate() on any changes
+            //     .duration(750)
+            //     .attr('transform', function(d) {
+            //         // Transform the group based on x and y property
+            //         var tx = xScale(d[chartScales.x]);
+            //         var ty = yScale(d[chartScales.y]);
+            //         return 'translate('+[tx, ty]+')';
+            //     });
 
+        }// end of gradient
 
-    }// end of scatter error
+        function redraw_pattern() {
+            dotsEnter.append('circle')
+                .style("fill", function (d, i) {
+                    if (removed_idx.includes(i)) {
+                        return 'url(#circles-9)'; //lightskyblue
+                    } else {
+                        return "steelblue";
+                    }
+                })
+                .attr('r', 3);
 
+            // Append a text to the ENTER selection
+            // dotsEnter.append('text')
+            //     .attr('y', -10)
+            //     .text(function(d) {
+            //         return d.Name;
+            //     });
 
-    function redraw_color(){
-        dotsEnter.append('circle')
-            .style("fill", function(d,i) {
-                if(removed_idx.includes(i)){
-                    return '#87CEFA'; //lightskyblue
-                }else{
-                    return "steelblue";
-                }})
-            .attr('r', 3);
+            // ENTER + UPDATE selections - bindings that happen on all updateChart calls
+            dots.merge(dotsEnter)
+                .transition() // Add transition - this will interpolate the translate() on any changes
+                .duration(750)
+                .attr('transform', function (d) {
+                    // Transform the group based on x and y property
+                    var tx = xScale(d[chartScales.x]);
+                    var ty = yScale(d[chartScales.y]);
+                    return 'translate(' + [tx, ty] + ')';
+                });
 
-        // Append a text to the ENTER selection
-        dotsEnter.append('text')
-            .attr('y', -10)
-            .text(function(d) {
-                return d.Name;
-            });
+        }// end of pattern
 
+        function redraw_shape() {
+            var symbol = d3.symbol();
 
+            // dotsEnter.append('circle')
+            // dotsEnter.append('circle')
+            // dotsEnter
+            //     .style("fill","steelblue")
+            //     .attr("d",symbol.type(function(d,i){
+            //         if(removed_idx.includes(i)){
+            //             return d3.symbolStar;
+            //         }
+            //         else{
+            //             return d3.symbolCircle;
+            //         }
+            //     }))
+            //     .attr('stroke','#000')
+            //     .attr('stoke-width',1)
+            //     .attr('r', 3);
 
-        // ENTER + UPDATE selections - bindings that happen on all updateChart calls
-        // dots.merge(dotsEnter)
-        //     .transition() // Add transition - this will interpolate the translate() on any changes
-        //     .duration(750)
-        //     .attr('transform', function(d) {
-        //         // Transform the group based on x and y property
-        //         var tx = xScale(d[chartScales.x]);
-        //         var ty = yScale(d[chartScales.y]);
-        //         return 'translate('+[tx, ty]+')';
-        //     });
+            dotsEnter.append('circle')
+                .filter(function (d, i) {
+                    return removed_idx.includes(i)
+                })
+                .style("fill", "white")
+                // .style('opacity',0.0)
+                // .attr("d",symbol.type(function(d,i){
+                //     if(removed_idx.includes(i)){
+                //         return d3.symbolStar;
+                //     }
+                //     else{
+                //         return d3.symbolCircle;
+                //     }
+                // }))
+                // .attr('stroke','#000')
+                // .attr('stoke-width',1)
+                .attr('r', 3);
 
-    }// end of color
+            dotsEnter.append('rect')
+                .filter(function (d, i) {
+                    return removed_idx.includes(i)
+                })
+                .style("fill", "steelblue")
+                // .attr("d",symbol.type(function(d,i){
+                //     if(removed_idx.includes(i)){
+                //         return d3.symbolStar;
+                //     }
+                //     else{
+                //         return d3.symbolCircle;
+                //     }
+                // }))
+                .attr('stroke', '#000')
+                .attr('width', 4.5)
+                .attr('height', 4.5)
+                .attr('stoke-width', 1);
 
-    function redraw_gradient(){
+            // Append a text to the ENTER selection
+            // dotsEnter.append('text')
+            //     .attr('y', -10)
+            //     .text(function(d) {
+            //         return d.Name;
+            //     });
 
-        var radialGradient = svg.append("defs")
-            .append("radialGradient")
-            .attr("id", "radial-gradient");
+            // ENTER + UPDATE selections - bindings that happen on all updateChart calls
+            dots.merge(dotsEnter)
+                .transition() // Add transition - this will interpolate the translate() on any changes
+                .duration(750)
+                .attr('transform', function (d) {
+                    // Transform the group based on x and y property
+                    var tx = xScale(d[chartScales.x]);
+                    var ty = yScale(d[chartScales.y]);
+                    return 'translate(' + [tx, ty] + ')';
+                });
 
-        radialGradient.append("stop")
-            .attr("offset", "0%")
-            .attr("stop-color", "#fff");
-
-        radialGradient.append("stop")
-            .attr("offset", "100%")
-            .attr("stop-color", "steelblue");
-
-        dotsEnter.append('circle')
-            .style("fill", function(d,i) {
-                if(removed_idx.includes(i)){
-                    return 'url(#radial-gradient)'; //lightskyblue
-                }else{
-                    return "steelblue";
-                }})
-            .attr('r', 3);
-
-        // Append a text to the ENTER selection
-        dotsEnter.append('text')
-            .attr('y', -10)
-            .text(function(d) {
-                return d.Name;
-            });
-
-        // dotsEnter.exit().remove();
-
-        // ENTER + UPDATE selections - bindings that happen on all updateChart calls
-        // dots.merge(dotsEnter)
-        //     .transition() // Add transition - this will interpolate the translate() on any changes
-        //     .duration(750)
-        //     .attr('transform', function(d) {
-        //         // Transform the group based on x and y property
-        //         var tx = xScale(d[chartScales.x]);
-        //         var ty = yScale(d[chartScales.y]);
-        //         return 'translate('+[tx, ty]+')';
-        //     });
-
-    }// end of gradient
-
-    function redraw_pattern(){
-        dotsEnter.append('circle')
-            .style("fill", function(d,i) {
-                if(removed_idx.includes(i)){
-                    return 'url(#circles-9)'; //lightskyblue
-                }else{
-                    return "steelblue";
-                }})
-            .attr('r', 3);
-
-        // Append a text to the ENTER selection
-        dotsEnter.append('text')
-            .attr('y', -10)
-            .text(function(d) {
-                return d.Name;
-            });
-
-        // ENTER + UPDATE selections - bindings that happen on all updateChart calls
-        dots.merge(dotsEnter)
-            .transition() // Add transition - this will interpolate the translate() on any changes
-            .duration(750)
-            .attr('transform', function(d) {
-                // Transform the group based on x and y property
-                var tx = xScale(d[chartScales.x]);
-                var ty = yScale(d[chartScales.y]);
-                return 'translate('+[tx, ty]+')';
-            });
-
-    }// end of pattern
-
-    function redraw_shape(){
-
-        var symbol = d3.symbol();
-
-        // dotsEnter.append('circle')
-        // dotsEnter.append('circle')
-        // dotsEnter
-        //     .style("fill","steelblue")
-        //     .attr("d",symbol.type(function(d,i){
-        //         if(removed_idx.includes(i)){
-        //             return d3.symbolStar;
-        //         }
-        //         else{
-        //             return d3.symbolCircle;
-        //         }
-        //     }))
-        //     .attr('stroke','#000')
-        //     .attr('stoke-width',1)
-        //     .attr('r', 3);
+        }// end of shape
 
 
-        dotsEnter.append('circle')
-            .filter(function(d,i){return removed_idx.includes(i)})
-            .style("fill","white")
-            // .style('opacity',0.0)
-            // .attr("d",symbol.type(function(d,i){
-            //     if(removed_idx.includes(i)){
-            //         return d3.symbolStar;
-            //     }
-            //     else{
-            //         return d3.symbolCircle;
-            //     }
-            // }))
-            // .attr('stroke','#000')
-            // .attr('stoke-width',1)
-            .attr('r', 3);
-
-        dotsEnter.append('rect')
-            .filter(function(d,i){return removed_idx.includes(i)})
-            .style("fill","steelblue")
-            // .attr("d",symbol.type(function(d,i){
-            //     if(removed_idx.includes(i)){
-            //         return d3.symbolStar;
-            //     }
-            //     else{
-            //         return d3.symbolCircle;
-            //     }
-            // }))
-            .attr('stroke','#000')
-            .attr('width',4.5)
-            .attr('height',4.5)
-            .attr('stoke-width',1);
-
-
-
-
-            // .attr('r', 3);
-
-
-
-        // Append a text to the ENTER selection
-        dotsEnter.append('text')
-            .attr('y', -10)
-            .text(function(d) {
-                return d.Name;
-            });
-
-        // ENTER + UPDATE selections - bindings that happen on all updateChart calls
-        dots.merge(dotsEnter)
-            .transition() // Add transition - this will interpolate the translate() on any changes
-            .duration(750)
-            .attr('transform', function(d) {
-                // Transform the group based on x and y property
-                var tx = xScale(d[chartScales.x]);
-                var ty = yScale(d[chartScales.y]);
-                return 'translate('+[tx, ty]+')';
-            });
-
-    }// end of shape
-
-
-}
+}// end of updatechart
 
 
 // Remember code outside of the data callback function will run before the data loads
@@ -663,7 +768,7 @@ var previewCsvUrl = function( csvUrl ) {
         whiskey = dataset;
 
         // removed_idx = getRandomInt(0,whiskey.length-1);
-        removed_idx = [77, 32, 255, 174, 152, 226, 18, 100, 142, 267, 10, 191, 248, 40, 97, 34, 276, 163, 83, 203, 155, 261, 14, 194, 129, 71, 145, 62]
+        removed_idx = [77, 32, 255, 174, 152, 226, 18, 100, 142, 267, 10, 191, 248, 40, 97, 34, 276, 163, 83, 203, 155, 261, 14, 194, 129, 71, 145, 62];
         // removed_idx = generateRan(whiskey.length-1);
 
 
@@ -753,8 +858,6 @@ var previewCsvUrl = function( csvUrl ) {
                 return +d[selection];});})
             .entries(data);
 
-        // console.log('avg',avg);
-
         var y = d3.scaleLinear()
             // .domain([0, d3.max(data, function(d){
             //     return +d[selection];
@@ -786,7 +889,6 @@ var previewCsvUrl = function( csvUrl ) {
 
         var xAxis = d3.axisBottom(x);
         var yAxis = d3.axisLeft(y);
-
 
         canvas.append("g")
             .attr("class", "x axis")
@@ -834,13 +936,8 @@ var previewCsvUrl = function( csvUrl ) {
 
             });
 
-        // removed_idx = getRandomInt(0,data.length-1);
-        // console.log('whiskey legth',whiskey.length-1);
-        // console.log('data length',data.length-1);
-        // removed_idx = generateRan(whiskey.length-1);
-
         // removed_idx = getRandomInt(0, data.length-1);
-        removed_idx = [77, 32, 255, 174, 152, 226, 18, 100, 142, 267, 10, 191, 248, 40, 97, 34, 276, 163, 83, 203, 155, 261, 14, 194, 129, 71, 145, 62]
+        removed_idx = [77, 32, 255, 174, 152, 226, 18, 100, 142, 267, 10, 191, 248, 40, 97, 34, 276, 163, 83, 203, 155, 261, 14, 194, 129, 71, 145, 62];
 
         total_missing = removed_idx.length;
 
