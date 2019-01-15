@@ -1,5 +1,3 @@
-
-
 // remove index randomly
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -278,6 +276,8 @@ function updateChart() {
     });
 
     function redraw_local(){
+        // add more ticks
+
         dotsEnter.append('circle')
             .style("fill", function(d,i) {
                 if(removed_idx.includes(i)){
@@ -293,6 +293,32 @@ function updateChart() {
             .text(function(d) {
                 return d.Name;
             });
+
+        chartG.append("g").selectAll("line")
+        // .enter()
+            .data(whiskey).enter()
+        .filter(function(d,i){ return removed_idx.includes(i)})
+        // // .filter()
+            .append("line")
+            .attr("class", "error-line")
+            .attr("x1", function(d) {
+                return xScale(d[chartScales.x]);
+            })
+            .attr("y1", function(d) {
+                // return yScale(d[chartScales.y]+1);
+                return yScale(0);
+            })
+            .attr("x2", function(d) {
+                return xScale(d[chartScales.x]);
+            })
+            .attr("y2", function(d) {
+                // return yScale(d[chartScales.y]-1);
+                return yScale(0-0.6);
+            });
+
+
+
+        // local_axis.selectAll("text").remove();
 
         // ENTER + UPDATE selections - bindings that happen on all updateChart calls
         dots.merge(dotsEnter)
@@ -1301,3 +1327,4 @@ d3.select("#cRight")
 // Initialize with csv file from server, this is the deafult
 // previewCsvUrl("./whiskey.csv");
 previewCsvUrl("./whiskey_global.csv");
+// previewCsvUrl("./whiskey_knn.csv");

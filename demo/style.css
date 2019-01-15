@@ -191,3 +191,11 @@ circle {
 .plot-bg {
     fill: #fff0e6;
 }
+
+.missing{
+    fill: black
+}
+
+.not_missing{
+    fill:white
+}
