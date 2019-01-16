@@ -53,6 +53,7 @@ function onXScaleChanged() {
     console.log('on xScale changed');
     //this one works temporarily
     dots_chart.remove().exit();
+
     // dotsEnter.remove().exit();
 
     // Update chart
@@ -66,6 +67,8 @@ function onYScaleChanged() {
 
     console.log('on yScale changed');
     dots_chart.remove().exit();
+
+
     // dotsEnter.remove().exit();
 
     // Update chart
@@ -628,7 +631,6 @@ var previewCsvUrl = function( csvUrl ) {
         make_bar(data);
         // d3.select("svg").remove();
 
-
     });
 
     //make the bar function
@@ -741,6 +743,8 @@ var previewCsvUrl = function( csvUrl ) {
 
             });
 
+        select_check = false;
+
         // removed_idx = getRandomInt(0, data.length-1);
         removed_idx = [77, 32, 255, 174, 152, 226, 18, 100, 142, 267, 10, 191, 248, 40, 97, 34, 276, 163, 83, 203, 155, 261, 14, 194, 129, 71, 145, 62];
 
@@ -759,12 +763,14 @@ var previewCsvUrl = function( csvUrl ) {
         d3.selectAll(("input[value='bar_color']")).on("change", function() {
             console.log('onchange bar color');
             redraw_bar_color(missingCount);
+
         });
 
         d3.selectAll(("input[value='bar_gradient']")).on("change", function() {
             console.log('onchange bar gradient');
             //work
             redraw_bar_gradient(missingCount);
+
         });
 
         d3.selectAll(("input[value='bar_error']")).on("change", function() {
@@ -775,20 +781,24 @@ var previewCsvUrl = function( csvUrl ) {
         d3.selectAll(("input[value='bar_pattern']")).on("change", function() {
             console.log('onchange bar pattern count');
             //work
+
             redraw_bar_pattern(missingCount);
         });
 
         d3.selectAll(("input[value='bar_missing']")).on("change", function() {
             console.log('onchange bar missing');
+
             redraw_bar_missing(total_missing,missingCount);
         });
 
         d3.selectAll(("input[value='bar_sketch']")).on("change", function() {
             console.log('onchange bar sketch');
+
             redraw_bar_sketch(missingCount);
         });
         d3.selectAll(("input[value='bar_dash']")).on("change", function() {
             console.log('onchange bar dash');
+
             redraw_bar_dash(missingCount);
         });
 
@@ -799,6 +809,8 @@ var previewCsvUrl = function( csvUrl ) {
             .append("select")
             .attr("id","dropdown")
             .on("change", function(d){
+
+                select_check = true;
                 selection = document.getElementById("dropdown");
 
                 var selectAvg = d3.nest()
@@ -810,6 +822,7 @@ var previewCsvUrl = function( csvUrl ) {
 
                 console.log('selection',selectAvg);
 
+                error_avg = selectAvg;
 
                 y.domain([0, d3.max(selectAvg, function(d){
                 // y.domain([0,d3.max(data,function(d){
@@ -817,12 +830,7 @@ var previewCsvUrl = function( csvUrl ) {
                     return +d.value;
                 })]);
 
-                // d3.selectAll("g.y.axis")
-                //     .transition()
-                //     .call(yAxis);
-
                 yAxis.scale(y);
-
 
                // this part added for transition
                 var bar = d3.selectAll(".rectangle").data(selectAvg);
@@ -844,6 +852,14 @@ var previewCsvUrl = function( csvUrl ) {
                     .transition()
                     .call(yAxis);
 
+                // canvase.selectAll(".error").remove().exit();
+
+                bar_error_line.remove().exit();
+                bar_error_top.remove().exit();
+                bar_error_down.remove().exit();
+
+
+
             });
 
         selector.selectAll("option")
@@ -855,6 +871,7 @@ var previewCsvUrl = function( csvUrl ) {
             .text(function(d){
                 return d;
             });
+
 
         function redraw_bar_color(missingCount){
 
@@ -884,10 +901,20 @@ var previewCsvUrl = function( csvUrl ) {
                     // return d.key + " : " + d.key;
                 });
 
+            bar_error_line.remove().exit();
+            bar_error_top.remove().exit();
+            bar_error_down.remove().exit();
+
         }// end of bar color
 
         function redraw_bar_error(missingCount,avg){
             // console.log('selectAvg',avg.map(function(d){return d.value}));
+
+            if(select_check  === true){
+                avg = error_avg;
+            }
+
+
             var vals = avg.map(function(d){return d.value});
 
             var std = math.std(vals);
@@ -922,7 +949,7 @@ var previewCsvUrl = function( csvUrl ) {
 
             // Add Error Line
             // canvas.append("g").selectAll("line")
-            canvas.append("g").selectAll(".rectangle")
+            bar_error_line = canvas.append("g").selectAll(".rectangle")
                 .data(avg).enter()
                 .append("line")
                 .attr("class", "error-line")
@@ -942,7 +969,7 @@ var previewCsvUrl = function( csvUrl ) {
                 });
 
             // add error top cap
-            canvas.append("g").selectAll(".rectangle")
+            bar_error_top = canvas.append("g").selectAll(".rectangle")
                 .data(avg).enter()
                 .append("line")
                 .attr("class", "error-cap")
@@ -960,7 +987,7 @@ var previewCsvUrl = function( csvUrl ) {
                 });
 
             // add error bottom cap
-            canvas.append("g").selectAll(".rectangle")
+            bar_error_down = canvas.append("g").selectAll(".rectangle")
                 .data(avg).enter()
                 .append("line")
                 .attr("class", "error-cap")
@@ -1007,6 +1034,10 @@ var previewCsvUrl = function( csvUrl ) {
                     // return d.Category + " : " + d[selection];
                     // return d.key + " : " + d.key;
                 });
+
+            bar_error_line.remove().exit();
+            bar_error_top.remove().exit();
+            bar_error_down.remove().exit();
 
         }// end of bar dash
 
@@ -1066,6 +1097,7 @@ var previewCsvUrl = function( csvUrl ) {
                 });
 
 
+
         }// end of bar gradient
 
         function redraw_bar_pattern(missingCount){
@@ -1097,10 +1129,14 @@ var previewCsvUrl = function( csvUrl ) {
                     // return d.key + " : " + d.key;
                 });
 
+            bar_error_line.remove().exit();
+            bar_error_top.remove().exit();
+            bar_error_down.remove().exit();
+
+
         }// end of bar pattern
 
         function redraw_bar_missing(total_missing,missingCount){
-
 
             var dataset = [total_missing];
 
@@ -1160,13 +1196,22 @@ var previewCsvUrl = function( csvUrl ) {
 
             // add text
             canvas.append("text")
-                .attr("class","label")
+                // .attr("class","unknown label")
+                .attr("class","unknown")
                 .text("unknown")
                 .attr("x",width+x.bandwidth()+15)
                 .attr("y",height+10)
                 .attr("font-size","11px")
                 .attr("fill","black")
                 .attr("text-anchor","middle");
+
+            bar_error_line.remove().exit();
+            bar_error_top.remove().exit();
+            bar_error_down.remove().exit();
+
+
+
+
 
         }// end of bar missing
 
