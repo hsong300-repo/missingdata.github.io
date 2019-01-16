@@ -217,7 +217,7 @@ function updateChart() {
     dotsEnter.append('circle')
         .style("fill","steelblue")
         // .attr("fill","steelblue")
-        .attr('r', 3);
+        .attr('r', 4);
 
     // Append a text to the ENTER selection
     dotsEnter.append('text')
@@ -299,7 +299,7 @@ function updateChart() {
                     return "steelblue";
                 }
             })
-            .attr('r', 3);
+            .attr('r', 4);
 
         dots_chart = chartG.append("g").attr('class', "Scatter")
             .selectAll("circle")
@@ -437,7 +437,7 @@ function updateChart() {
                         return "steelblue";
                     }
                 })
-                .attr('r', 3);
+                .attr('r', 4);
 
             dots_chart = chartG.append("g").attr('class', "Scatter")
                 .selectAll("circle")
@@ -465,7 +465,7 @@ function updateChart() {
                         return "steelblue";
                     }
                 })
-                .attr('r', 3);
+                .attr('r', 4);
 
 
             dots_chart = chartG.append("g").attr('class', "Scatter")
@@ -505,7 +505,7 @@ function updateChart() {
                 // }))
                 // .attr('stroke','#000')
                 // .attr('stoke-width',1)
-                .attr('r', 3);
+                .attr('r', 4);
 
             dotsEnter.append('rect')
                 .filter(function (d, i) {
@@ -1195,7 +1195,7 @@ var previewCsvUrl = function( csvUrl ) {
                 });
 
             // add text
-            canvas.append("text")
+            bar_unknown_text = canvas.append("text")
                 // .attr("class","unknown label")
                 .attr("class","unknown")
                 .text("unknown")
