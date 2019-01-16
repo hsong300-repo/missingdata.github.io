@@ -39,6 +39,11 @@ function generateRan(data_len){
     return random
 }
 
+function atLeastOneRadio() {
+
+    return ($('input[type=radio]:checked').size() > 0);
+}
+
 // Global functions called when select elements changed
 function onXScaleChanged() {
     var select = d3.select('#xScaleSelect').node();
@@ -121,54 +126,6 @@ function glob_avg(val,rand_idx){
     return new_arr;
 }
 
-// d3.selectAll(("input[value='color']")).on("change", function() {
-//     console.log('onchange color');
-//     redraw_color();
-// });
-//
-// function redraw_color(){
-//
-//     dotsEnter
-//         .append('circle')
-//         // .data(whiskey).enter()
-//         // .attr('cx',function(d){xScale(d[chartScales.x]);})
-//         // .attr('cy', function(d){yScale(d[chartScales.y]);})
-//         .style("fill", function(d,i) {
-//             if(removed_idx.includes(i)){
-//                 return '#87CEFA'; //lightskyblue
-//             }else{
-//                 return "steelblue";
-//             }})
-//         .attr('r', 3);
-//
-//     chartG.append("g").attr('class',"Scatter")
-//         .selectAll("circle")
-//         .data(whiskey).enter()
-//         .append('circle')
-//         .attr("cx", function(d) {
-//                     return xScale(d[chartScales.x]);})
-//         .attr("cy", function(d) {
-//             return yScale(d[chartScales.y]);})
-//                 .attr('r',4);
-//
-//     // chartG.selectAll(".dot")
-//     // // .enter()
-//     //     .data(whiskey).enter()
-//     //     .filter(function(d,i){ return removed_idx.includes(i)})
-//     //     // // .filter()
-//     //     .append("circle")
-//     //     .attr("cx", function(d) {
-//     //         return xScale(d[chartScales.x]);
-//     //     })
-//     //     .attr("cy", function(d) {
-//     //         // return yScale(d[chartScales.y]+1);
-//     //         return yScale(0);
-//     //     })
-//     //     .attr('r', 4)
-//     //     .style("fill",'#87CEFA');
-//
-// }// end of color
-
 
 // var svg = d3.select('svg');
 var svg = d3.select('svg');
@@ -218,13 +175,13 @@ function updateChart() {
 
     // Create and position scatterplot circles
     // User Enter, Update (don't need exit)
-    dots = chartG.selectAll('.dot')
+    var dots = chartG.selectAll('.dot')
     // var dots = chartG.selectAll('.dot')
     // var dots = chartG.selectAll('.shapes')
         .data(whiskey);
 
     // var dotsEnter = dots.enter()
-    dotsEnter = dots.enter()
+    var dotsEnter = dots.enter()
         .append('g')
         .attr('class', 'dot')
         // .attr("fill","steelblue")
@@ -275,26 +232,6 @@ function updateChart() {
         redraw_color();
     });
 
-
-
-        // chartG.selectAll(".dot")
-        // // .enter()
-        //     .data(whiskey).enter()
-        //     .filter(function(d,i){ return removed_idx.includes(i)})
-        //     // // .filter()
-        //     .append("circle")
-        //     .attr("cx", function(d) {
-        //         return xScale(d[chartScales.x]);
-        //     })
-        //     .attr("cy", function(d) {
-        //         // return yScale(d[chartScales.y]+1);
-        //         return yScale(0);
-        //     })
-        //     .attr('r', 4)
-        //     .style("fill",'#87CEFA');
-
-    // }// end of color
-
     d3.selectAll(("input[value='gradient']")).on("change", function() {
         console.log('onchange gradient');
         redraw_gradient();
@@ -338,17 +275,14 @@ function updateChart() {
             return 'translate('+[tx, ty]+')';
         });
 
+    dots_chart = chartG.append("g").attr('class', "Scatter")
+        .selectAll("circle")
+        .data(whiskey).enter();
 
 
-    // if the radio button is clicked
-    //color clicked
-    // dotsEnter.selectAll(("input[value='color']")).on("change", function() {
-    // d3.selectAll(("input[value='color']")).on("change", function() {
-    //     console.log('onchange color');
-    //     redraw_color();
-    //
-    // });
     function redraw_color() {
+
+        console.log('redraw color removed idx',removed_idx);
 
         dotsEnter
             .append('circle')
@@ -364,13 +298,12 @@ function updateChart() {
             })
             .attr('r', 3);
 
-
         dots_chart = chartG.append("g").attr('class', "Scatter")
             .selectAll("circle")
             .data(whiskey).enter()
             .append('circle')
             .filter(function (d, i) {
-                return removed_idx.includes(i)
+                return removed_idx.includes(i);
             })
             .style("fill", '#87CEFA')
             .attr("cx", function (d) {
@@ -381,22 +314,9 @@ function updateChart() {
             })
             .attr('r', 4);
 
-        // change = dots_chart.enter();
-        // // chartG.exit().remove();
-        //
-        // dots_chart.merge(change)
-        // dots.merge(dotsEnter)
-        //     .transition() // Add transition - this will interpolate the translate() on any changes
-        //     .duration(750)
-        //     .attr('transform', function (d) {
-        //         console.log('this gets called merge');
-        //         // Transform the group based on x and y property
-        //         var tx = xScale(d[chartScales.x]);
-        //         var ty = yScale(d[chartScales.y]);
-        //         return 'translate(' + [tx, ty] + ')';
-        //     });
 
-        }// end of color
+
+    }// end of color
 
         function redraw_local() {
             // add more ticks
@@ -417,7 +337,7 @@ function updateChart() {
             //         return d.Name;
             //     });
 
-            chartG.append("g").selectAll("line")
+            dots_chart = chartG.append("g").selectAll("line")
             // .enter()
                 .data(whiskey).enter()
                 .filter(function (d, i) {
@@ -441,19 +361,7 @@ function updateChart() {
                     return yScale(0 - 0.6);
                 });
 
-
-            // local_axis.selectAll("text").remove();
-
-            // ENTER + UPDATE selections - bindings that happen on all updateChart calls
-            dots.merge(dotsEnter)
-                .transition() // Add transition - this will interpolate the translate() on any changes
-                .duration(750)
-                .attr('transform', function (d) {
-                    // Transform the group based on x and y property
-                    var tx = xScale(d[chartScales.x]);
-                    var ty = yScale(d[chartScales.y]);
-                    return 'translate(' + [tx, ty] + ')';
-                });
+            // dots_chart.remove().exit();
 
 
         }// end of local
@@ -479,12 +387,12 @@ function updateChart() {
 
             // var std = math.std(vals);
 
-            chartG.append("g").selectAll("line")
+            dots_chart = chartG.append("g").selectAll("line")
             // .enter()
                 .data(whiskey).enter()
-            // .filter(function(d,i){
-            //     console.log('error, removed idx',removed_idx)
-            //     return removed_idx.includes(i)})
+            .filter(function(d,i){
+                // console.log('error, removed idx',removed_idx)
+                return removed_idx.includes(i)})
             // // .filter()
                 .append("line")
                 .attr("class", "error-line")
@@ -501,46 +409,8 @@ function updateChart() {
                     return yScale(d[chartScales.y] - 1);
                 });
 
-            // ENTER + UPDATE selections - bindings that happen on all updateChart calls
-            // dots.merge(chartG)
-            dots.merge(dotsEnter)
-                .transition() // Add transition - this will interpolate the translate() on any changes
-                .duration(750)
-                .attr('transform', function (d) {
-                    // Transform the group based on x and y property
-                    var tx = xScale(d[chartScales.x]);
-                    var ty = yScale(d[chartScales.y]);
-                    return 'translate(' + [tx, ty] + ')';
-                });
 
         }// end of scatter error
-
-
-        // function redraw_color(dotsEnter){
-        //
-        //     dotsEnter
-        //         .append('circle')
-        //         // .data(whiskey).enter()
-        //         // .attr('cx',function(d){xScale(d[chartScales.x]);})
-        //         // .attr('cy', function(d){yScale(d[chartScales.y]);})
-        //         .style("fill", function(d,i) {
-        //             if(removed_idx.includes(i)){
-        //                 return '#87CEFA'; //lightskyblue
-        //             }else{
-        //                 return "steelblue";
-        //             }})
-        //         .attr('r', 3);
-        //
-        //
-        //     //
-        //     // // Append a text to the ENTER selection
-        //     // dotsEnter.append('text')
-        //     //     .attr('y', -10)
-        //     //     .text(function(d) {
-        //     //         return d.Name;
-        //     //     });
-        //
-        // }// end of color
 
         function redraw_gradient() {
 
@@ -556,23 +426,6 @@ function updateChart() {
                 .attr("offset", "100%")
                 .attr("stop-color", "steelblue");
 
-            // dots.merge(dotsEnter)
-            //     .transition()
-            //     .duration(750)
-            //     .style("fill", function(d,i) {
-            //                 if(removed_idx.includes(i)){
-            //                     return 'url(#radial-gradient)'; //lightskyblue
-            //                 }else{
-            //                     return "steelblue";
-            //                 }})
-            //     .attr('transform', function(d) {
-            //             // Transform the group based on x and y property
-            //             var tx = xScale(d[chartScales.x]);
-            //             var ty = yScale(d[chartScales.y]);
-            //             return 'translate('+[tx, ty]+')';
-            //         });
-
-
             dotsEnter.append('circle')
                 .style("fill", function (d, i) {
                     if (removed_idx.includes(i)) {
@@ -583,26 +436,21 @@ function updateChart() {
                 })
                 .attr('r', 3);
 
-            // Append a text to the ENTER selection
-            // dotsEnter.append('text')
-            //     .attr('y', -10)
-            //     .text(function(d) {
-            //         return d.Name;
-            //     });
-
-            // dotsEnter.exit().remove();
-
-            // ENTER + UPDATE selections - bindings that happen on all updateChart calls
-            // dots.merge(dotsEnter)
-            //     .transition() // Add transition - this will interpolate the translate() on any changes
-            //     .duration(750)
-            //     .attr('transform', function(d) {
-            //         // Transform the group based on x and y property
-            //         var tx = xScale(d[chartScales.x]);
-            //         var ty = yScale(d[chartScales.y]);
-            //         return 'translate('+[tx, ty]+')';
-            //     });
-
+            dots_chart = chartG.append("g").attr('class', "Scatter")
+                .selectAll("circle")
+                .data(whiskey).enter()
+                .append('circle')
+                .filter(function (d, i) {
+                    return removed_idx.includes(i)
+                })
+                .style("fill", 'url(#radial-gradient)')
+                .attr("cx", function (d) {
+                    return xScale(d[chartScales.x]);
+                })
+                .attr("cy", function (d) {
+                    return yScale(d[chartScales.y]);
+                })
+                .attr('r', 4);
         }// end of gradient
 
         function redraw_pattern() {
@@ -616,44 +464,27 @@ function updateChart() {
                 })
                 .attr('r', 3);
 
-            // Append a text to the ENTER selection
-            // dotsEnter.append('text')
-            //     .attr('y', -10)
-            //     .text(function(d) {
-            //         return d.Name;
-            //     });
 
-            // ENTER + UPDATE selections - bindings that happen on all updateChart calls
-            dots.merge(dotsEnter)
-                .transition() // Add transition - this will interpolate the translate() on any changes
-                .duration(750)
-                .attr('transform', function (d) {
-                    // Transform the group based on x and y property
-                    var tx = xScale(d[chartScales.x]);
-                    var ty = yScale(d[chartScales.y]);
-                    return 'translate(' + [tx, ty] + ')';
-                });
+            dots_chart = chartG.append("g").attr('class', "Scatter")
+                .selectAll("circle")
+                .data(whiskey).enter()
+                .append('circle')
+                .filter(function (d, i) {
+                    return removed_idx.includes(i)
+                })
+                .style("fill", 'url(#circles-9)')
+                .attr("cx", function (d) {
+                    return xScale(d[chartScales.x]);
+                })
+                .attr("cy", function (d) {
+                    return yScale(d[chartScales.y]);
+                })
+                .attr('r', 4);
 
         }// end of pattern
 
         function redraw_shape() {
             var symbol = d3.symbol();
-
-            // dotsEnter.append('circle')
-            // dotsEnter.append('circle')
-            // dotsEnter
-            //     .style("fill","steelblue")
-            //     .attr("d",symbol.type(function(d,i){
-            //         if(removed_idx.includes(i)){
-            //             return d3.symbolStar;
-            //         }
-            //         else{
-            //             return d3.symbolCircle;
-            //         }
-            //     }))
-            //     .attr('stroke','#000')
-            //     .attr('stoke-width',1)
-            //     .attr('r', 3);
 
             dotsEnter.append('circle')
                 .filter(function (d, i) {
@@ -678,36 +509,10 @@ function updateChart() {
                     return removed_idx.includes(i)
                 })
                 .style("fill", "steelblue")
-                // .attr("d",symbol.type(function(d,i){
-                //     if(removed_idx.includes(i)){
-                //         return d3.symbolStar;
-                //     }
-                //     else{
-                //         return d3.symbolCircle;
-                //     }
-                // }))
                 .attr('stroke', '#000')
                 .attr('width', 4.5)
                 .attr('height', 4.5)
                 .attr('stoke-width', 1);
-
-            // Append a text to the ENTER selection
-            // dotsEnter.append('text')
-            //     .attr('y', -10)
-            //     .text(function(d) {
-            //         return d.Name;
-            //     });
-
-            // ENTER + UPDATE selections - bindings that happen on all updateChart calls
-            dots.merge(dotsEnter)
-                .transition() // Add transition - this will interpolate the translate() on any changes
-                .duration(750)
-                .attr('transform', function (d) {
-                    // Transform the group based on x and y property
-                    var tx = xScale(d[chartScales.x]);
-                    var ty = yScale(d[chartScales.y]);
-                    return 'translate(' + [tx, ty] + ')';
-                });
 
         }// end of shape
 
@@ -1415,5 +1220,6 @@ d3.select("#cRight")
 
 // Initialize with csv file from server, this is the deafult
 // previewCsvUrl("./whiskey.csv");
-previewCsvUrl("./whiskey_global.csv");
-// previewCsvUrl("./whiskey_knn.csv");
+
+// previewCsvUrl("./whiskey_global.csv");
+previewCsvUrl("./whiskey_knn.csv");
