@@ -52,7 +52,8 @@ function onXScaleChanged() {
 
     console.log('on xScale changed');
     //this one works temporarily
-    dots_chart.remove().exit();
+    dots_chart.remove().exit(); //remove some of the encodings
+    d3.selectAll(".Scatter").remove().exit(); //it seemed to fix the remaining circles
 
     // dotsEnter.remove().exit();
 
@@ -67,7 +68,7 @@ function onYScaleChanged() {
 
     console.log('on yScale changed');
     dots_chart.remove().exit();
-
+    d3.selectAll(".Scatter").remove().exit();
 
     // dotsEnter.remove().exit();
 
@@ -279,9 +280,8 @@ function updateChart() {
         });
 
     dots_chart = chartG.append("g").attr('class', "Scatter")
-        .selectAll("circle")
-        .data(whiskey).enter();
-
+        .selectAll("circle");
+        // .data(whiskey).enter();
 
     function redraw_color() {
 
@@ -333,13 +333,6 @@ function updateChart() {
                 })
                 .attr('r', 3);
 
-            // Append a text to the ENTER selection
-            // dotsEnter.append('text')
-            //     .attr('y', -10)
-            //     .text(function(d) {
-            //         return d.Name;
-            //     });
-
             dots_chart = chartG.append("g").selectAll("line")
             // .enter()
                 .data(whiskey).enter()
@@ -370,22 +363,6 @@ function updateChart() {
         }// end of local
 
         function redraw_error() {
-            // Add Error Line
-
-            // dotsEnter.exit().remove();
-
-            // console.log('whiskye data',whiskey);
-            // console.log('whiskey keys',Object.keys(whiskey));
-            //Add Scatter Points
-            // dotsEnter.append('circle')
-            //     .style("fill", function(d,i) {
-            //         if(removed_idx.includes(i)){
-            //             return 'orange'; //lightskyblue
-            //         }else{
-            //             return "steelblue";
-            //         }})
-            //     .attr('r', 3);
-
             // Add Error Line
 
             // var std = math.std(vals);
