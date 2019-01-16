@@ -457,10 +457,11 @@ function updateChart() {
         }// end of gradient
 
         function redraw_pattern() {
+
             dotsEnter.append('circle')
                 .style("fill", function (d, i) {
                     if (removed_idx.includes(i)) {
-                        return 'url(#circles-9)'; //lightskyblue
+                        return 'url(#diagonal-stripes)'; //lightskyblue
                     } else {
                         return "steelblue";
                     }
@@ -475,7 +476,10 @@ function updateChart() {
                 .filter(function (d, i) {
                     return removed_idx.includes(i)
                 })
-                .style("fill", 'url(#circles-9)')
+                // .style("fill", 'url(#circles-9)')
+                .style("fill", 'url(#diagonal-stripes)')
+                // .attr('stroke', '#000')
+                // .attr('stroke-width', 1)
                 .attr("cx", function (d) {
                     return xScale(d[chartScales.x]);
                 })
@@ -1120,6 +1124,7 @@ var previewCsvUrl = function( csvUrl ) {
                     return y(d.value);
                 })
                 // .attr("fill","url(#diagonal-stripe-2) #4682B4")
+                // .attr("fill","url(#diagonal-stripes)")
                 .attr("fill","url(#diagonal-stripes)")
                 // .attr("fill","url(#gradient)")
                 .append("title")
