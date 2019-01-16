@@ -53,7 +53,7 @@ function onXScaleChanged() {
     console.log('on xScale changed');
     //this one works temporarily
     dots_chart.remove().exit(); //remove some of the encodings
-    d3.selectAll(".Scatter").remove().exit(); //it seemed to fix the remaining circles
+    // d3.selectAll(".Scatter").remove().exit(); //it seemed to fix the remaining circles
 
     // dotsEnter.remove().exit();
 
@@ -68,7 +68,7 @@ function onYScaleChanged() {
 
     console.log('on yScale changed');
     dots_chart.remove().exit();
-    d3.selectAll(".Scatter").remove().exit();
+    // d3.selectAll(".Scatter").remove().exit();
 
     // dotsEnter.remove().exit();
 
@@ -326,12 +326,38 @@ function updateChart() {
             dotsEnter.append('circle')
                 .style("fill", function (d, i) {
                     if (removed_idx.includes(i)) {
-                        return 'white'; //lightskyblue
+                        return '#fff'; //lightskyblue
                     } else {
                         return "steelblue";
                     }
                 })
-                .attr('r', 3);
+                .style("stroke", function (d, i) {
+                    if (removed_idx.includes(i)) {
+                        return '#87CEFA'; //lightskyblue
+                    }})
+                .style("stroke-width", function (d, i) {
+                    if (removed_idx.includes(i)) {
+                        return 1; //lightskyblue
+                    }})
+                .attr('r', 4);
+
+            // dots_chart = chartG.append("g").attr('class', "Scatter")
+            //     .selectAll("circle")
+            //     .data(whiskey).enter()
+            //     .append('circle')
+            //     .filter(function (d, i) {
+            //         return removed_idx.includes(i);
+            //     })
+            //     .style("stroke", '#87CEFA')
+            //     .style("stroke-width", 1)
+            //     .style("fill", '#fff')
+            //     .attr("cx", function (d) {
+            //         return xScale(d[chartScales.x]);
+            //     })
+            //     .attr("cy", function (d) {
+            //         return yScale(d[chartScales.y]);
+            //     })
+            //     .attr('r', 4);
 
             dots_chart = chartG.append("g").selectAll("line")
             // .enter()
@@ -470,23 +496,24 @@ function updateChart() {
         function redraw_shape() {
             var symbol = d3.symbol();
 
-            dotsEnter.append('circle')
-                .filter(function (d, i) {
-                    return removed_idx.includes(i)
-                })
-                .style("fill", "white")
-                // .style('opacity',0.0)
-                // .attr("d",symbol.type(function(d,i){
-                //     if(removed_idx.includes(i)){
-                //         return d3.symbolStar;
-                //     }
-                //     else{
-                //         return d3.symbolCircle;
-                //     }
-                // }))
-                // .attr('stroke','#000')
-                // .attr('stoke-width',1)
-                .attr('r', 4);
+            // dotsEnter.append('circle')
+            //     .filter(function (d, i) {
+            //         return removed_idx.includes(i)
+            //     })
+            //     .style("fill", "white")
+            //     // .style('opacity',0.0)
+            //     // .attr("d",symbol.type(function(d,i){
+            //     //     if(removed_idx.includes(i)){
+            //     //         return d3.symbolStar;
+            //     //     }
+            //     //     else{
+            //     //         return d3.symbolCircle;
+            //     //     }
+            //     // }))
+            //     // .attr('stroke','#000')
+            //     // .attr('stoke-width',1)
+            //     .attr('r', 4);
+            dotsEnter.exit().remove();
 
             dotsEnter.append('rect')
                 .filter(function (d, i) {
@@ -497,6 +524,26 @@ function updateChart() {
                 .attr('width', 4.5)
                 .attr('height', 4.5)
                 .attr('stoke-width', 1);
+
+            dots_chart = chartG.append("g").attr('class', "Scatter")
+                .selectAll("circle")
+                .data(whiskey).enter()
+                .append('rect')
+                .filter(function (d, i) {
+                    return removed_idx.includes(i)
+                })
+                .style("fill", "steelblue")
+                .attr('stroke', '#000')
+                .attr('width', 4.5)
+                .attr('height', 4.5)
+                .attr('stoke-width', 1)
+                .attr("x", function (d) {
+                    return xScale(d[chartScales.x]);
+                })
+                .attr("y", function (d) {
+                    return yScale(d[chartScales.y]);
+                });
+                // .attr('r', 4);
 
         }// end of shape
 
