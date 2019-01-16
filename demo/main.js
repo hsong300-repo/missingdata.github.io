@@ -513,17 +513,17 @@ function updateChart() {
             //     // .attr('stroke','#000')
             //     // .attr('stoke-width',1)
             //     .attr('r', 4);
-            dotsEnter.exit().remove();
-
-            dotsEnter.append('rect')
-                .filter(function (d, i) {
-                    return removed_idx.includes(i)
-                })
-                .style("fill", "steelblue")
-                .attr('stroke', '#000')
-                .attr('width', 4.5)
-                .attr('height', 4.5)
-                .attr('stoke-width', 1);
+            // dotsEnter.exit().remove();
+            //
+            // dotsEnter.append('rect')
+            //     .filter(function (d, i) {
+            //         return removed_idx.includes(i)
+            //     })
+            //     .style("fill", "steelblue")
+            //     .attr('stroke', '#000')
+            //     .attr('width', 6)
+            //     .attr('height', 6)
+            //     .attr('stoke-width', 1);
 
             dots_chart = chartG.append("g").attr('class', "Scatter")
                 .selectAll("circle")
@@ -534,14 +534,14 @@ function updateChart() {
                 })
                 .style("fill", "steelblue")
                 .attr('stroke', '#000')
-                .attr('width', 4.5)
-                .attr('height', 4.5)
+                .attr('width', 6.5)
+                .attr('height', 6.5)
                 .attr('stoke-width', 1)
                 .attr("x", function (d) {
-                    return xScale(d[chartScales.x]);
+                    return xScale(d[chartScales.x])-3;
                 })
                 .attr("y", function (d) {
-                    return yScale(d[chartScales.y]);
+                    return yScale(d[chartScales.y])-3;
                 });
                 // .attr('r', 4);
 
