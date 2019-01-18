@@ -68,6 +68,7 @@ function onYScaleChanged() {
 
     console.log('on yScale changed');
     dots_chart.remove().exit();
+
     // d3.selectAll(".Scatter").remove().exit();
 
     // dotsEnter.remove().exit();
@@ -285,6 +286,10 @@ function updateChart() {
 
     function redraw_color() {
 
+        dots_chart.remove().exit(); //remove some of the encodings
+
+
+
         console.log('redraw color removed idx',removed_idx);
 
         dotsEnter
@@ -317,11 +322,16 @@ function updateChart() {
             })
             .attr('r', 4);
 
+        dots_chart_line.remove().exit();
 
 
     }// end of color
 
         function redraw_local() {
+
+            dots_chart.remove().exit(); //remove some of the encodings
+
+
             // add more ticks
             dotsEnter.append('circle')
                 .style("fill", function (d, i) {
@@ -341,33 +351,17 @@ function updateChart() {
                     }})
                 .attr('r', 4);
 
-            // dots_chart = chartG.append("g").attr('class', "Scatter")
-            //     .selectAll("circle")
-            //     .data(whiskey).enter()
-            //     .append('circle')
-            //     .filter(function (d, i) {
-            //         return removed_idx.includes(i);
-            //     })
-            //     .style("stroke", '#87CEFA')
-            //     .style("stroke-width", 1)
-            //     .style("fill", '#fff')
-            //     .attr("cx", function (d) {
-            //         return xScale(d[chartScales.x]);
-            //     })
-            //     .attr("cy", function (d) {
-            //         return yScale(d[chartScales.y]);
-            //     })
-            //     .attr('r', 4);
+            dotsEnter.append("g").
 
-            dots_chart = chartG.append("g").selectAll("line")
+            dots_chart_line = chartG.append("g").selectAll("line")
             // .enter()
                 .data(whiskey).enter()
+                .append("line")
+                .attr("class", "error-line")
                 .filter(function (d, i) {
                     return removed_idx.includes(i)
                 })
                 // // .filter()
-                .append("line")
-                .attr("class", "error-line")
                 .attr("x1", function (d) {
                     return xScale(d[chartScales.x]);
                 })
@@ -383,6 +377,24 @@ function updateChart() {
                     return yScale(0 - 0.6);
                 });
 
+            dots_chart = chartG.append("g").attr('class', "Scatter")
+                .selectAll("circle")
+                .data(whiskey).enter()
+                .append('circle')
+                .filter(function (d, i) {
+                    return removed_idx.includes(i);
+                })
+                .style("stroke", '#87CEFA')
+                .style("stroke-width", 1)
+                .style("fill", '#fff')
+                .attr("cx", function (d) {
+                    return xScale(d[chartScales.x]);
+                })
+                .attr("cy", function (d) {
+                    return yScale(d[chartScales.y]);
+                })
+                .attr('r', 4);
+
             // dots_chart.remove().exit();
 
 
@@ -390,6 +402,8 @@ function updateChart() {
 
         function redraw_error() {
             // Add Error Line
+
+            dots_chart.remove().exit(); //remove some of the encodings
 
             // var std = math.std(vals);
 
@@ -415,10 +429,15 @@ function updateChart() {
                     return yScale(d[chartScales.y] - 1);
                 });
 
+            dots_chart_line.remove().exit();
+
 
         }// end of scatter error
 
         function redraw_gradient() {
+
+            dots_chart.remove().exit(); //remove some of the encodings
+
 
             var radialGradient = svg.append("defs")
                 .append("radialGradient")
@@ -457,9 +476,15 @@ function updateChart() {
                     return yScale(d[chartScales.y]);
                 })
                 .attr('r', 4);
+
+            dots_chart_line.remove().exit();
+
         }// end of gradient
 
         function redraw_pattern() {
+
+            dots_chart.remove().exit(); //remove some of the encodings
+
 
             dotsEnter.append('circle')
                 .style("fill", function (d, i) {
@@ -491,10 +516,16 @@ function updateChart() {
                 })
                 .attr('r', 4);
 
+            dots_chart_line.remove().exit();
+
+
         }// end of pattern
 
         function redraw_shape() {
             var symbol = d3.symbol();
+
+            dots_chart.remove().exit(); //remove some of the encodings
+
 
             // dotsEnter.append('circle')
             //     .filter(function (d, i) {
@@ -544,6 +575,9 @@ function updateChart() {
                     return yScale(d[chartScales.y])-3;
                 });
                 // .attr('r', 4);
+
+            dots_chart_line.remove().exit();
+
 
         }// end of shape
 
@@ -1295,5 +1329,31 @@ d3.select("#cRight")
 // Initialize with csv file from server, this is the deafult
 // previewCsvUrl("./whiskey.csv");
 
-// previewCsvUrl("./whiskey_global.csv");
-previewCsvUrl("./whiskey_knn.csv");
+d3.selectAll(("input[value='bar_mean']")).on("change", function() {
+    // console.log('onchange gradient');
+    // redraw_gradient();
+    previewCsvUrl("./whiskey_global.csv");
+});
+
+d3.selectAll(("input[value='bar_knn']")).on("change", function() {
+    // console.log('onchange gradient');
+    // redraw_gradient();
+    previewCsvUrl("./whiskey_knn.csv");
+});
+
+d3.selectAll(("input[value='scatter_mean']")).on("change", function() {
+    // console.log('onchange gradient');
+    // redraw_gradient();
+    previewCsvUrl("./whiskey_global.csv");
+});
+
+d3.selectAll(("input[value='scatter_knn']")).on("change", function() {
+    // console.log('onchange gradient');
+    // redraw_gradient();
+    previewCsvUrl("./whiskey_knn.csv");
+});
+
+
+//previewCsvUrl("./whiskey_global.csv");
+// previewCsvUrl("./whiskey_knn.csv");
+// previewCsvUrl(url);

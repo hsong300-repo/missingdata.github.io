@@ -55,6 +55,13 @@
         <div id="scatter_view"  style="display:none;" class="answer_list" >
             <div class='row' id="scatter_radio" style="display:none;">
                 <div class='radio' >
+                    <br>Imputation: <input type="radio" name="vis" value="scatter_mean"> global mean
+                    <!--</label>-->
+                    <!--<label class='radio-inline'>-->
+                    <input type="radio" name="vis" value="scatter_knn"> knn<br>
+                    <label class='radio-inline'>
+                        Visual Encoding: <input type="radio" name="vis" value="error"> error
+                    </label>
                     <label class='radio-inline'>
                         <input type="radio" name="vis" value="color"> color
                         <!--<input type="radio" name="color" value="color" onclick='change(this.value)'> color-->
@@ -76,13 +83,12 @@
                     <label class='radio-inline'>
                         <input type="radio" name="vis" value="shape"> shape
                     </label>
+
                     <!--<label class='radio-inline'>-->
                         <!--<input type="radio" name="vis" value="default" checked > default-->
                         <!--&lt;!&ndash;<input type="radio" name="default" value="default" onclick='change(this.value)' checked > default&ndash;&gt;-->
                     <!--</label>-->
-                    <label class='radio-inline'>
-                        <input type="radio" name="vis" value="error"> error
-                    </label>
+
                 </div>
             </div>
             <!--<div style="position: absolute; top: 300px;">-->
@@ -115,8 +121,12 @@
         <div id='bar_view' style="display:none;">
             <div class='row' id="bar_radio" style="display:none;">
                 <div class='radio'>
+                    <br>Imputation: <input type="radio" name="vis" value="bar_mean"> global mean
+                    <!--</label>-->
+                    <!--<label class='radio-inline'>-->
+                    <input type="radio" name="vis" value="bar_knn"> knn<br>
                     <label class='radio-inline'>
-                        <input type="radio" name="vis" value="bar_color"> color
+                        Visual Encoding: <input type="radio" name="vis" value="bar_color"> color
                         <!--<input type="radio" name="color" value="color" onclick='change(this.value)'> color-->
                     </label>
                     <label class='radio-inline'>
@@ -142,8 +152,15 @@
                     <label class='radio-inline'>
                         <input type="radio" name="vis" value="bar_missing"> unknown missing
                     </label>
+                    <!--<label class='radio-inline'>-->
+
+                    <!--</label>-->
                 </div>
+
+
             </div>
+
+
 
             <svg class ="charts" id = "bar_canvas">
             </svg>
