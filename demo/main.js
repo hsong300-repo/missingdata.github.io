@@ -35,7 +35,6 @@ function generateRan(data_len){
         else
             i--;
     }
-    console.log('generate ran',random);
     return random
 }
 
@@ -47,9 +46,20 @@ function onXScaleChanged() {
     // Get current value of select element, save to global chartScales
     chartScales.x = select.options[select.selectedIndex].value;
 
+    if(typeof dots_chart === 'undefined'){ // bars
+        console.log('dotschart undefined');
+    }else{
+        dots_chart.remove().exit(); //remove some of the encodings
+    }
+    if(typeof dots_chart_line === 'undefined'){ // bars
+        console.log('dotschart undefined');
+    }else{
+        dots_chart_line.remove().exit();
+    }
+
     console.log('on xScale changed');
     //this one works temporarily
-    dots_chart.remove().exit(); //remove some of the encodings
+    // dots_chart.remove().exit(); //remove some of the encodings
     // d3.selectAll(".Scatter").remove().exit(); //it seemed to fix the remaining circles
 
     // dotsEnter.remove().exit();
@@ -63,8 +73,19 @@ function onYScaleChanged() {
     // Get current value of select element, save to global chartScales
     chartScales.y = select.options[select.selectedIndex].value;
 
+    if(typeof dots_chart === 'undefined'){ // bars
+        console.log('dotschart undefined');
+    }else{
+        dots_chart.remove().exit(); //remove some of the encodings
+    }
+    if(typeof dots_chart_line === 'undefined'){ // bars
+        console.log('dotschart undefined');
+    }else{
+        dots_chart_line.remove().exit();
+    }
+
     console.log('on yScale changed');
-    dots_chart.remove().exit();
+    // dots_chart.remove().exit();
 
     // d3.selectAll(".Scatter").remove().exit();
 
@@ -284,12 +305,18 @@ function updateChart() {
 
     function redraw_color() {
 
-        dots_chart.remove().exit(); //remove some of the encodings
-
-
-
-        console.log('redraw color removed idx',removed_idx);
-
+        if(typeof dots_chart === 'undefined'){ // bars
+            console.log('dotschart undefined');
+        }else{
+            dots_chart.remove().exit(); //remove some of the encodings
+        }
+        if(typeof dots_chart_line === 'undefined'){ // bars
+            console.log('dotschart undefined');
+        }else{
+            dots_chart_line.remove().exit();
+        }
+        // dots_chart.remove().exit(); //remove some of the encodings
+        // console.log('redraw color removed idx',removed_idx);
         dotsEnter
             .append('circle')
             // .data(whiskey).enter()
@@ -320,15 +347,22 @@ function updateChart() {
             })
             .attr('r', 4);
 
-        dots_chart_line.remove().exit();
 
 
     }// end of color
 
         function redraw_local() {
 
-            dots_chart.remove().exit(); //remove some of the encodings
-
+            if(typeof dots_chart === 'undefined'){ // bars
+                console.log('dotschart undefined');
+            }else{
+                dots_chart.remove().exit(); //remove some of the encodings
+            }
+            if(typeof dots_chart_line === 'undefined'){ // bars
+                console.log('dotschart undefined');
+            }else{
+                dots_chart_line.remove().exit();
+            }
 
             // add more ticks
             dotsEnter.append('circle')
@@ -401,7 +435,17 @@ function updateChart() {
         function redraw_error() {
             // Add Error Line
 
-            dots_chart.remove().exit(); //remove some of the encodings
+            if(typeof dots_chart === 'undefined'){ // bars
+                console.log('dotschart undefined');
+            }else{
+                dots_chart.remove().exit(); //remove some of the encodings
+            }
+            if(typeof dots_chart_line === 'undefined'){ // bars
+                console.log('dotschart undefined');
+            }else{
+                dots_chart_line.remove().exit();
+            }
+
 
             // var std = math.std(vals);
 
@@ -434,7 +478,16 @@ function updateChart() {
 
         function redraw_gradient() {
 
-            dots_chart.remove().exit(); //remove some of the encodings
+            if(typeof dots_chart === 'undefined'){ // bars
+                console.log('dotschart undefined');
+            }else{
+                dots_chart.remove().exit(); //remove some of the encodings
+            }
+            if(typeof dots_chart_line === 'undefined'){ // bars
+                console.log('dotschart undefined');
+            }else{
+                dots_chart_line.remove().exit();
+            }
 
 
             var radialGradient = svg.append("defs")
@@ -481,7 +534,16 @@ function updateChart() {
 
         function redraw_pattern() {
 
-            dots_chart.remove().exit(); //remove some of the encodings
+            if(typeof dots_chart === 'undefined'){ // bars
+                console.log('dotschart undefined');
+            }else{
+                dots_chart.remove().exit(); //remove some of the encodings
+            }
+            if(typeof dots_chart_line === 'undefined'){ // bars
+                console.log('dotschart undefined');
+            }else{
+                dots_chart_line.remove().exit();
+            }
 
 
             dotsEnter.append('circle')
@@ -522,7 +584,16 @@ function updateChart() {
         function redraw_shape() {
             var symbol = d3.symbol();
 
-            dots_chart.remove().exit(); //remove some of the encodings
+            if(typeof dots_chart === 'undefined'){ // bars
+                console.log('dotschart undefined');
+            }else{
+                dots_chart.remove().exit(); //remove some of the encodings
+            }
+            if(typeof dots_chart_line === 'undefined'){ // bars
+                console.log('dotschart undefined');
+            }else{
+                dots_chart_line.remove().exit();
+            }
 
 
             // dotsEnter.append('circle')
@@ -574,7 +645,6 @@ function updateChart() {
                 });
                 // .attr('r', 4);
 
-            dots_chart_line.remove().exit();
 
 
         }// end of shape
@@ -696,8 +766,6 @@ var previewCsvUrl = function( csvUrl ) {
 
     //make the bar function
     function make_bar(data){
-
-
 
         var margin = {top: 80, right: 180, bottom: 80, left: 180},
             width = 960 - margin.left - margin.right,
@@ -950,8 +1018,22 @@ var previewCsvUrl = function( csvUrl ) {
 
 
         function redraw_bar_color(missingCount){
+            if(typeof missing_bar === 'undefined'){ // bars
+                console.log('missing bar undefined');
+            }else{
 
-            canvas.selectAll("rectangle")
+                missing_bar.remove().exit();
+                // canvas.remove().exit();
+            }
+            if(typeof bar_unknown_text === 'undefined'){ // bars
+                console.log('text bar undefined');
+            }else{
+                bar_unknown_text.remove().exit();
+                missing_count_bar.remove().exit();
+                // canvas.remove().exit();
+            }
+
+            missing_bar = canvas.selectAll("rectangle")
             // .data(data)
                 .data(missingCount)
                 .enter()
@@ -968,6 +1050,7 @@ var previewCsvUrl = function( csvUrl ) {
                 .attr("y", function(d){
                     return y(d.value);
                 })
+                .attr("stroke","#87CEFA")
                 .attr("fill","#87CEFA")
                 // .attr("fill","url(#gradient)")
                 .append("title")
@@ -990,13 +1073,28 @@ var previewCsvUrl = function( csvUrl ) {
                 avg = error_avg;
             }
 
+            if(typeof missing_bar === 'undefined'){ // bars
+                console.log('missing bar undefined');
+            }else{
+
+                missing_bar.remove().exit();
+                // canvas.remove().exit();
+            }
+            if(typeof bar_unknown_text === 'undefined'){ // bars
+                console.log('text bar undefined');
+            }else{
+                bar_unknown_text.remove().exit();
+                missing_count_bar.remove().exit();
+                // canvas.remove().exit();
+            }
+
 
             var vals = avg.map(function(d){return d.value});
 
             var std = math.std(vals);
             // console.log('std',std);
 
-            canvas.selectAll("rectangle")
+            missing_bar =canvas.selectAll("rectangle")
             // .data(data)
                 .data(missingCount)
                 .enter()
@@ -1013,6 +1111,7 @@ var previewCsvUrl = function( csvUrl ) {
                 .attr("y", function(d){
                     return y(d.value);
                 })
+                .attr("stroke","#87CEFA")
                 .attr("fill","#87CEFA")
                 // .attr("fill","url(#gradient)")
                 .append("title")
@@ -1083,7 +1182,22 @@ var previewCsvUrl = function( csvUrl ) {
 
         function redraw_bar_dash(missingCount){
 
-            canvas.selectAll("rectangle")
+            if(typeof missing_bar === 'undefined'){ // bars
+                console.log('missing bar undefined');
+            }else{
+
+                missing_bar.remove().exit();
+                // canvas.remove().exit();
+            }
+            if(typeof bar_unknown_text === 'undefined'){ // bars
+                console.log('text bar undefined');
+            }else{
+                bar_unknown_text.remove().exit();
+                missing_count_bar.remove().exit();
+                // canvas.remove().exit();
+            }
+
+            missing_bar = canvas.selectAll("rectangle")
             // .data(data)
                 .data(missingCount)
                 .enter()
@@ -1119,7 +1233,19 @@ var previewCsvUrl = function( csvUrl ) {
 
         function redraw_bar_gradient(missingCount){
 
-            console.log('bar gradient draw')
+            if(typeof missing_bar === 'undefined'){ // bars
+                console.log('missing bar undefined');
+            }else{
+                missing_count_bar.remove().exit();
+                missing_bar.remove().exit();
+                // canvas.remove().exit();
+            }
+            if(typeof bar_unknown_text === 'undefined'){ // bars
+                console.log('text bar undefined');
+            }else{
+                bar_unknown_text.remove().exit();
+                // canvas.remove().exit();
+            }
 
             var gradient_bar = canvas.append("defs")
             // var gradient_bar = canvas.append("svg:defs")
@@ -1146,7 +1272,7 @@ var previewCsvUrl = function( csvUrl ) {
                 .attr("stop-color", "steelblue")
                 .attr("stop-opacity", 1);
 
-            canvas.selectAll("rectangle")
+            missing_bar = canvas.selectAll("rectangle")
             // .data(data)
                 .data(missingCount)
                 .enter()
@@ -1163,6 +1289,7 @@ var previewCsvUrl = function( csvUrl ) {
                 .attr("y", function(d){
                     return y(d.value);
                 })
+                .attr("stroke","url(#svgGradient)")
                 .attr("fill","url(#svgGradient)")
                 // .attr("fill","url(#gradient)")
                 .append("title")
@@ -1177,8 +1304,22 @@ var previewCsvUrl = function( csvUrl ) {
         }// end of bar gradient
 
         function redraw_bar_pattern(missingCount){
+            if(typeof missing_bar === 'undefined'){ // bars
+                console.log('missing bar undefined');
+            }else{
 
-            canvas.selectAll("rectangle")
+                missing_bar.remove().exit();
+                // canvas.remove().exit();
+            }
+            if(typeof bar_unknown_text === 'undefined'){ // bars
+                console.log('text bar undefined');
+            }else{
+                bar_unknown_text.remove().exit();
+                missing_count_bar.remove().exit();
+                // canvas.remove().exit();
+            }
+
+            missing_bar = canvas.selectAll("rectangle")
             // .data(data)
                 .data(missingCount)
                 .enter()
@@ -1197,6 +1338,7 @@ var previewCsvUrl = function( csvUrl ) {
                 })
                 // .attr("fill","url(#diagonal-stripe-2) #4682B4")
                 // .attr("fill","url(#diagonal-stripes)")
+                .attr("stroke","url(#diagonal-stripes)")
                 .attr("fill","url(#diagonal-stripes)")
                 // .attr("fill","url(#gradient)")
                 .append("title")
@@ -1215,10 +1357,25 @@ var previewCsvUrl = function( csvUrl ) {
 
         function redraw_bar_missing(total_missing,missingCount){
 
+            if(typeof missing_bar === 'undefined'){ // bars
+                console.log('missing bar undefined');
+            }else{
+
+                missing_bar.remove().exit();
+                // canvas.remove().exit();
+            }
+            if(typeof missing_count_bar === 'undefined'){ // bars
+                console.log('text bar undefined');
+            }else{
+                bar_unknown_text.remove().exit();
+                missing_count_bar.remove().exit();
+                // canvas.remove().exit();
+            }
+
             var dataset = [total_missing];
 
             //fill rect in steelblue to hide
-            canvas.selectAll("rectangle")
+            missing_bar = canvas.selectAll("rectangle")
             // .data(data)
                 .data(missingCount)
                 .enter()
@@ -1236,6 +1393,7 @@ var previewCsvUrl = function( csvUrl ) {
                     return y(d.value);
                 })
                 // .attr("fill","url(#diagonal-stripe-2) #4682B4")
+                .attr("stroke","steelblue")
                 .attr("fill","steelblue")
                 // .attr("fill","url(#gradient)")
                 .append("title")
@@ -1245,7 +1403,7 @@ var previewCsvUrl = function( csvUrl ) {
                     // return d.key + " : " + d.key;
                 });// fill it like this to hide
 
-            canvas.selectAll("rectangle")
+            missing_count_bar = canvas.selectAll("rectangle")
             // .data(data)
             //     .data(missingCount)
                 .data(dataset)
@@ -1336,7 +1494,7 @@ d3.select("#cRight")
 // d3.select("body")
     .append("div")
     .attr("id", "preview")
-    .style("margin", "5px")
+    .style("margin", "5px");
 
 
 
