@@ -39,10 +39,7 @@ function generateRan(data_len){
     return random
 }
 
-function atLeastOneRadio() {
 
-    return ($('input[type=radio]:checked').size() > 0);
-}
 
 // Global functions called when select elements changed
 function onXScaleChanged() {
@@ -598,6 +595,7 @@ var rowToHtml = function( row ) {
 
 var previewCsvUrl = function( csvUrl ) {
 
+
     //part that draws the scatter chart
     // Compute chart dimensions
     //         var	margin = {top: 30, right: 20, bottom: 30, left: 50},
@@ -698,14 +696,31 @@ var previewCsvUrl = function( csvUrl ) {
     //make the bar function
     function make_bar(data){
 
+
+
         var margin = {top: 80, right: 180, bottom: 80, left: 180},
             width = 960 - margin.left - margin.right,
             // height = 500 - margin.top - margin.bottom;
             height = 500 - margin.top - margin.bottom;
 
         // var svg = d3.select("body").append("svg")
-        var canvas = d3.select("#bar_canvas")
-            // .attr("id","canvas")
+        // var canvas = d3.select("#bar_canvas")
+        // var canvas = (typeof canvas === 'undefined') ? def_val : canvas;
+        // if(typeof canvas === 'undefined'){
+        //     // canvas = d3.select("#bar_canvas")
+        //     // // .attr("id","canvas")
+        //     //     .attr("width", width + margin.left + margin.right)
+        //     //     .attr("height", height + margin.top + margin.bottom)
+        //     //     .append("g")
+        //     //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        //     console.log('canvas undefined');
+        // }else{
+        //     canvas.exit().remove();
+        // }
+
+        // var canvas = d3.select("#bar_canvas")
+        canvas = d3.select("#bar_canvas")
+        // .attr("id","canvas")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
@@ -867,7 +882,7 @@ var previewCsvUrl = function( csvUrl ) {
 
         // var selector = d3.select("#drop")
         // var selector = d3.select("#bar_view")
-        var selector = d3.selectAll("#bar_view")
+        selector = d3.selectAll("#bar_view")
             .append("select")
             .attr("id","dropdown")
             .on("change", function(d){
@@ -919,8 +934,6 @@ var previewCsvUrl = function( csvUrl ) {
                 bar_error_line.remove().exit();
                 bar_error_top.remove().exit();
                 bar_error_down.remove().exit();
-
-
 
             });
 
@@ -1332,24 +1345,60 @@ d3.select("#cRight")
 d3.selectAll(("input[value='bar_mean']")).on("change", function() {
     // console.log('onchange gradient');
     // redraw_gradient();
+    // selector.exit().remove();
+    // csvUrl = "./whiskey_global.csv";
+    if(typeof canvas === 'undefined'){
+        console.log('canvas undefined');
+    }else{
+        console.log('canvas defined');
+        selector.remove().exit();
+        canvas.remove().exit();
+    }
+    // canvas.exit().remove();
     previewCsvUrl("./whiskey_global.csv");
 });
 
 d3.selectAll(("input[value='bar_knn']")).on("change", function() {
     // console.log('onchange gradient');
     // redraw_gradient();
+    // csvUrl = "./whiskey_knn.csv";
+
+    if(typeof canvas === 'undefined'){
+        console.log('canvas undefined');
+    }else{
+        console.log('canvas defined');
+        selector.remove().exit();
+        canvas.remove().exit();
+    }
+    // canvas.exit().remove();
     previewCsvUrl("./whiskey_knn.csv");
 });
 
 d3.selectAll(("input[value='scatter_mean']")).on("change", function() {
     // console.log('onchange gradient');
     // redraw_gradient();
+    // csvUrl = "./whiskey_global.csv";
+    if(typeof canvas === 'undefined'){
+        console.log('canvas undefined');
+    }else{
+        console.log('canvas defined');
+        selector.remove().exit();
+        canvas.remove().exit();
+    }
     previewCsvUrl("./whiskey_global.csv");
 });
 
 d3.selectAll(("input[value='scatter_knn']")).on("change", function() {
     // console.log('onchange gradient');
     // redraw_gradient();
+    // csvUrl = "./whiskey_knn.csv";
+    if(typeof canvas === 'undefined'){
+        console.log('canvas undefined');
+    }else{
+        console.log('canvas defined');
+        selector.remove().exit();
+        canvas.remove().exit();
+    }
     previewCsvUrl("./whiskey_knn.csv");
 });
 

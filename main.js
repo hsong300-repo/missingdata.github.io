@@ -468,7 +468,8 @@ var previewCsvUrl = function( csvUrl ) {
         // Create global variables here
         whiskey = dataset;
 
-        removed_idx = getRandomInt(0,whiskey.length-1);
+        // removed_idx = getRandomInt(0,whiskey.length-1);
+        removed_idx = [77, 32, 255, 174, 152, 226, 18, 100, 142, 267, 10, 191, 248, 40, 97, 34, 276, 163, 83, 203, 155, 261, 14, 194, 129, 71, 145, 62];
 
 
         // Create scales and other functions here
@@ -623,7 +624,8 @@ var previewCsvUrl = function( csvUrl ) {
 
             });
 
-        removed_idx = getRandomInt(0,data.length-1);
+        // removed_idx = getRandomInt(0,data.length-1);
+        removed_idx = [77, 32, 255, 174, 152, 226, 18, 100, 142, 267, 10, 191, 248, 40, 97, 34, 276, 163, 83, 203, 155, 261, 14, 194, 129, 71, 145, 62];
 
         var f_data = data.filter(function(d,i){return removed_idx.includes(i);})
 
@@ -896,4 +898,5 @@ d3.select("#cRight")
 
 
 // Initialize with csv file from server, this is the deafult
-previewCsvUrl("./whiskey.csv");
+// previewCsvUrl("./whiskey.csv");
+previewCsvUrl("./whiskey_global.csv");
