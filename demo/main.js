@@ -57,6 +57,7 @@ function onXScaleChanged() {
         dots_chart_line.remove().exit();
     }
 
+
     console.log('on xScale changed');
     //this one works temporarily
     // dots_chart.remove().exit(); //remove some of the encodings
@@ -999,6 +1000,18 @@ var previewCsvUrl = function( csvUrl ) {
                     .call(yAxis);
 
                 // canvase.selectAll(".error").remove().exit();
+                if(typeof bar_unknown_text === 'undefined'){ // bars
+                    console.log('text bar undefined');
+                }else{
+                    bar_unknown_text.remove().exit();
+                    // canvas.remove().exit();
+                }
+                if(typeof missing_count_bar === 'undefined'){ // bars
+                    console.log('text bar undefined');
+                }else{
+                    missing_count_bar.remove().exit();
+                    // canvas.remove().exit();
+                }
 
                 bar_error_line.remove().exit();
                 bar_error_top.remove().exit();
@@ -1029,6 +1042,11 @@ var previewCsvUrl = function( csvUrl ) {
                 console.log('text bar undefined');
             }else{
                 bar_unknown_text.remove().exit();
+                // canvas.remove().exit();
+            }
+            if(typeof missing_count_bar === 'undefined'){ // bars
+                console.log('text bar undefined');
+            }else{
                 missing_count_bar.remove().exit();
                 // canvas.remove().exit();
             }
@@ -1084,6 +1102,11 @@ var previewCsvUrl = function( csvUrl ) {
                 console.log('text bar undefined');
             }else{
                 bar_unknown_text.remove().exit();
+                // canvas.remove().exit();
+            }
+            if(typeof missing_count_bar === 'undefined'){ // bars
+                console.log('text bar undefined');
+            }else{
                 missing_count_bar.remove().exit();
                 // canvas.remove().exit();
             }
@@ -1193,6 +1216,11 @@ var previewCsvUrl = function( csvUrl ) {
                 console.log('text bar undefined');
             }else{
                 bar_unknown_text.remove().exit();
+                // canvas.remove().exit();
+            }
+            if(typeof missing_count_bar === 'undefined'){ // bars
+                console.log('text bar undefined');
+            }else{
                 missing_count_bar.remove().exit();
                 // canvas.remove().exit();
             }
@@ -1236,7 +1264,6 @@ var previewCsvUrl = function( csvUrl ) {
             if(typeof missing_bar === 'undefined'){ // bars
                 console.log('missing bar undefined');
             }else{
-                missing_count_bar.remove().exit();
                 missing_bar.remove().exit();
                 // canvas.remove().exit();
             }
@@ -1244,6 +1271,12 @@ var previewCsvUrl = function( csvUrl ) {
                 console.log('text bar undefined');
             }else{
                 bar_unknown_text.remove().exit();
+                // canvas.remove().exit();
+            }
+            if(typeof missing_count_bar === 'undefined'){ // bars
+                console.log('text bar undefined');
+            }else{
+                missing_count_bar.remove().exit();
                 // canvas.remove().exit();
             }
 
@@ -1315,9 +1348,15 @@ var previewCsvUrl = function( csvUrl ) {
                 console.log('text bar undefined');
             }else{
                 bar_unknown_text.remove().exit();
+                // canvas.remove().exit();
+            }
+            if(typeof missing_count_bar === 'undefined'){ // bars
+                console.log('text bar undefined');
+            }else{
                 missing_count_bar.remove().exit();
                 // canvas.remove().exit();
             }
+
 
             missing_bar = canvas.selectAll("rectangle")
             // .data(data)
@@ -1364,13 +1403,19 @@ var previewCsvUrl = function( csvUrl ) {
                 missing_bar.remove().exit();
                 // canvas.remove().exit();
             }
-            if(typeof missing_count_bar === 'undefined'){ // bars
+            if(typeof bar_unknown_text === 'undefined'){ // bars
                 console.log('text bar undefined');
             }else{
                 bar_unknown_text.remove().exit();
+                // canvas.remove().exit();
+            }
+            if(typeof missing_count_bar === 'undefined'){ // bars
+                console.log('text bar undefined');
+            }else{
                 missing_count_bar.remove().exit();
                 // canvas.remove().exit();
             }
+
 
             var dataset = [total_missing];
 
