@@ -133,7 +133,6 @@ function glob_avg(val,rand_idx){
 var svg = d3.select('svg');
 // var svg = d3.select('scatter_canvas').append('svg');
 
-
 // Get layout parameters
 var svgWidth = +svg.attr('width');
 var svgHeight = +svg.attr('height');
@@ -177,13 +176,15 @@ function updateChart() {
 
     // Create and position scatterplot circles
     // User Enter, Update (don't need exit)
-    var dots = chartG.selectAll('.dot')
+    dots = chartG.selectAll('.dot')
+
+    // var dots = chartG.selectAll('.dot')
     // var dots = chartG.selectAll('.dot')
     // var dots = chartG.selectAll('.shapes')
         .data(whiskey);
 
     // var dotsEnter = dots.enter()
-    var dotsEnter = dots.enter()
+    dotsEnter = dots.enter()
         .append('g')
         .attr('class', 'dot')
         // .attr("fill","steelblue")
@@ -1343,10 +1344,6 @@ d3.select("#cRight")
 // previewCsvUrl("./whiskey.csv");
 
 d3.selectAll(("input[value='bar_mean']")).on("change", function() {
-    // console.log('onchange gradient');
-    // redraw_gradient();
-    // selector.exit().remove();
-    // csvUrl = "./whiskey_global.csv";
     if(typeof canvas === 'undefined'){
         console.log('canvas undefined');
     }else{
@@ -1354,15 +1351,20 @@ d3.selectAll(("input[value='bar_mean']")).on("change", function() {
         selector.remove().exit();
         canvas.remove().exit();
     }
-    // canvas.exit().remove();
+    if(typeof dots === 'undefined'){  //scatter
+        console.log('canvas undefined');
+    }else{
+        console.log('canvas defined');
+        dots.remove().exit();
+        dotsEnter.remove().exit();
+        dots_chart.remove().exit();
+
+
+    }
     previewCsvUrl("./whiskey_global.csv");
 });
 
 d3.selectAll(("input[value='bar_knn']")).on("change", function() {
-    // console.log('onchange gradient');
-    // redraw_gradient();
-    // csvUrl = "./whiskey_knn.csv";
-
     if(typeof canvas === 'undefined'){
         console.log('canvas undefined');
     }else{
@@ -1370,34 +1372,56 @@ d3.selectAll(("input[value='bar_knn']")).on("change", function() {
         selector.remove().exit();
         canvas.remove().exit();
     }
-    // canvas.exit().remove();
+    if(typeof dots === 'undefined'){  //scatter
+        console.log('canvas undefined');
+    }else{
+        console.log('canvas defined');
+        dots.remove().exit();
+        dotsEnter.remove().exit();
+        dots_chart.remove().exit();
+
+
+    }
     previewCsvUrl("./whiskey_knn.csv");
 });
 
 d3.selectAll(("input[value='scatter_mean']")).on("change", function() {
-    // console.log('onchange gradient');
-    // redraw_gradient();
-    // csvUrl = "./whiskey_global.csv";
     if(typeof canvas === 'undefined'){
         console.log('canvas undefined');
     }else{
         console.log('canvas defined');
         selector.remove().exit();
         canvas.remove().exit();
+    }
+    if(typeof dots === 'undefined'){  //scatter
+        console.log('canvas undefined');
+    }else{
+        console.log('canvas defined');
+        dots.remove().exit();
+        dotsEnter.remove().exit();
+        dots_chart.remove().exit();
+
+
     }
     previewCsvUrl("./whiskey_global.csv");
 });
 
 d3.selectAll(("input[value='scatter_knn']")).on("change", function() {
-    // console.log('onchange gradient');
-    // redraw_gradient();
-    // csvUrl = "./whiskey_knn.csv";
-    if(typeof canvas === 'undefined'){
+    if(typeof canvas === 'undefined'){ // bars
         console.log('canvas undefined');
     }else{
         console.log('canvas defined');
         selector.remove().exit();
         canvas.remove().exit();
+    }
+
+    if(typeof dots === 'undefined'){  //scatter
+        console.log('canvas undefined');
+    }else{
+        console.log('canvas defined');
+        dots.remove().exit();
+        dotsEnter.remove().exit();
+        dots_chart.remove().exit();
     }
     previewCsvUrl("./whiskey_knn.csv");
 });
