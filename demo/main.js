@@ -366,25 +366,46 @@ function updateChart() {
             }
 
             // add more ticks
-            dotsEnter.append('circle')
-                .style("fill", function (d, i) {
-                    if (removed_idx.includes(i)) {
-                        return '#fff'; //lightskyblue
-                    } else {
-                        return "steelblue";
-                    }
-                })
-                .style("stroke", function (d, i) {
-                    if (removed_idx.includes(i)) {
-                        return '#87CEFA'; //lightskyblue
-                    }})
-                .style("stroke-width", function (d, i) {
-                    if (removed_idx.includes(i)) {
-                        return 1; //lightskyblue
-                    }})
-                .attr('r', 4);
+            // dotsEnter.append('circle')
+            //     .style("fill", function (d, i) {
+            //         if (removed_idx.includes(i)) {
+            //             return '#fff'; //white
+            //         } else {
+            //             return "steelblue";
+            //         }
+            //     })
+            //     .style("stroke", function (d, i) {
+            //         if (removed_idx.includes(i)) {
+            //             return '#87CEFA'; //lightskyblue
+            //         }})
+            //     .style("stroke-width", function (d, i) {
+            //         if (removed_idx.includes(i)) {
+            //             return 1; //lightskyblue
+            //         }})
+            //     .attr('r', 4);
 
-            dotsEnter.append("g").
+            // dotsEnter.append("g").selectAll("line")
+            //     .data(whiskey).enter()
+            //     .append("line")
+            //     .attr("class", "error-line")
+            //     .filter(function (d, i) {
+            //         return removed_idx.includes(i)
+            //     })
+            //     // // .filter()
+            //     .attr("x1", function (d) {
+            //         return xScale(d[chartScales.x]);
+            //     })
+            //     .attr("y1", function (d) {
+            //         // return yScale(d[chartScales.y]+1);
+            //         return yScale(0);
+            //     })
+            //     .attr("x2", function (d) {
+            //         return xScale(d[chartScales.x]);
+            //     })
+            //     .attr("y2", function (d) {
+            //         // return yScale(d[chartScales.y]-1);
+            //         return yScale(0 - 0.6);
+            //     });
 
             dots_chart_line = chartG.append("g").selectAll("line")
             // .enter()
@@ -409,6 +430,7 @@ function updateChart() {
                     // return yScale(d[chartScales.y]-1);
                     return yScale(0 - 0.6);
                 });
+
 
             dots_chart = chartG.append("g").attr('class', "Scatter")
                 .selectAll("circle")
