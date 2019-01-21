@@ -828,10 +828,26 @@ var previewCsvUrl = function( csvUrl ) {
             .range([height, 0]);
         var y1Axis = d3.axisRight(y1);
 
+        // text label for the y axis
+
+
         canvas.append("g")
             .attr("transform", "translate( " + width + ", 0 )")
             .attr("class", "y1 axis")
             .call(y1Axis);
+
+        // end of y1-axis
+        canvas.append("text")
+        // .attr("class","unknown label")
+            .attr("class","unknown")
+            .text("Missing Count")
+            // .attr("transform", "rotate(-90)")
+            .attr("x",width+50+15)
+            .attr("y",height/2)
+            .attr("font-size","11px")
+            .attr("fill","black")
+            .attr("text-anchor","middle");
+
         //***end of the calling
 
         var x = d3.scaleBand()
@@ -1484,6 +1500,9 @@ var previewCsvUrl = function( csvUrl ) {
                 .attr("font-size","11px")
                 .attr("fill","black")
                 .attr("text-anchor","middle");
+
+
+
 
             bar_error_line.remove().exit();
             bar_error_top.remove().exit();
