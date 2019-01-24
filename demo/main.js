@@ -756,20 +756,22 @@ var previewCsvUrl = function( csvUrl ) {
 
 
         // Create global object called chartScales to keep state
+        // chartScales = {x: 'Price', y: 'Age'};
         chartScales = {x: 'Price', y: 'Age'};
+
         //============this temporary commented
         // user preference message, make it work for other variables as well
-        var attribute = "Price";
+        // var attribute = "Price";
         // alert("You have " + missing_count + " missing values in attribute " + attribute);
-        alert("You have " + removed_idx.length + " missing values in attribute " + attribute);
+        // alert("You have " + removed_idx.length + " missing values in attribute " + attribute);
 
 
-        var userPrefernce;
-        if (confirm("Do you want to exclude missing values from computation and the representation?")){
-            txt = "You pressed Ok!";
-        }else{
-            txt = "You pressed Cancel!";
-        }
+        // var userPrefernce;
+        // if (confirm("Do you want to exclude missing values from computation and the representation?")){
+        //     txt = "You pressed Ok!";
+        // }else{
+        //     txt = "You pressed Cancel!";
+        // }
         updateChart();
 
 
