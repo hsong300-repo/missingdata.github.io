@@ -318,7 +318,7 @@ function updateChart() {
             console.log('dotschart undefined');
         }else{
             dots_chart_line.remove().exit();
-            dots_remove.remove().exit();
+            // dots_remove.remove().exit();
 
         }
         // dots_chart.remove().exit(); //remove some of the encodings
@@ -368,8 +368,12 @@ function updateChart() {
                 console.log('dotschart undefined');
             }else{
                 dots_chart_line.remove().exit();
-                dots_remove.remove().exit();
+                // dots_remove.remove().exit();
 
+            } if(typeof dots_remove === 'undefined'){ // bars
+                console.log('dots_remove undefined');
+            }else{
+                dots_remove.remove().exit(); //remove some of the encodings
             }
 
             // add more ticks
@@ -484,7 +488,7 @@ function updateChart() {
                 console.log('dotschart undefined');
             }else{
                 dots_chart_line.remove().exit();
-                dots_remove.remove().exit();
+                // dots_remove.remove().exit();
 
             }
 
@@ -526,7 +530,7 @@ function updateChart() {
                     return yScale(d[chartScales.y] - 1);
                 });
 
-            dots_chart_line.remove().exit();
+            // dots_chart_line.remove().exit();
 
 
         }// end of scatter error
@@ -542,7 +546,7 @@ function updateChart() {
                 console.log('dotschart undefined');
             }else{
                 dots_chart_line.remove().exit();
-                dots_remove.remove().exit();
+                // dots_remove.remove().exit();
 
             }
 
@@ -585,7 +589,7 @@ function updateChart() {
                 })
                 .attr('r', 4);
 
-            dots_chart_line.remove().exit();
+            // dots_chart_line.remove().exit();
 
         }// end of gradient
 
@@ -600,7 +604,7 @@ function updateChart() {
                 console.log('dotschart undefined');
             }else{
                 dots_chart_line.remove().exit();
-                dots_remove.remove().exit();
+                // dots_remove.remove().exit();
 
             }
 
@@ -652,7 +656,7 @@ function updateChart() {
                 console.log('dotschart undefined');
             }else{
                 dots_chart_line.remove().exit();
-                dots_remove.remove().exit();
+                // dots_remove.remove().exit();
 
             }
 
