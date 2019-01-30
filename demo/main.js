@@ -872,9 +872,17 @@ var previewCsvUrl = function( csvUrl ) {
         var avg = d3.nest()
             .key(function(d){ return d.Category;})
             .rollup(function(v){return d3.mean(v,function(d){
-                // console.log('nest selection',selection)
                 return +d[selection];});})
             .entries(data);
+
+        var std = d3.nest()
+            .key(function(d){ return d.Category;})
+            .rollup(function(v){return d3.deviation(v,function(d){
+                return +d[selection];});})
+            .entries(data);
+
+        console.log('std',std);
+        console.log('std first',std[0].value,std[1].value);
 
         var y = d3.scaleLinear()
             // .domain([0, d3.max(data, function(d){
@@ -1243,9 +1251,10 @@ var previewCsvUrl = function( csvUrl ) {
 
 
             var vals = avg.map(function(d){return d.value});
+            console.log('avg',avg);
 
-            var std = math.std(vals);
-            // console.log('std',std);
+            // var std = math.std(vals);
+
 
             not_missing_bar = canvas.selectAll("rectangle")
             // .data(data)
@@ -1312,15 +1321,15 @@ var previewCsvUrl = function( csvUrl ) {
                     // return x(d.key);
                     return x(d.key) + x.bandwidth()/2;
                 })
-                .attr("y1", function(d) {
-                    return y(d.value + std);
+                .attr("y1", function(d,i) {
+                    return y(d.value + std[i].value);
                 })
                 .attr("x2", function(d) {
                     // return x(d.key);
                     return x(d.key) + x.bandwidth()/2;
                 })
-                .attr("y2", function(d) {
-                    return y(d.value - std);
+                .attr("y2", function(d,i) {
+                    return y(d.value - std[i].value);
                 });
 
             // add error top cap
@@ -1331,14 +1340,14 @@ var previewCsvUrl = function( csvUrl ) {
                 .attr("x1", function(d) {
                     return x(d.key)-3 + x.bandwidth()/2;
                 })
-                .attr("y1", function(d) {
-                    return y(d.value + std);
+                .attr("y1", function(d,i) {
+                    return y(d.value + std[i].value);
                 })
                 .attr("x2", function(d) {
                     return x(d.key)+3 + x.bandwidth()/2;
                 })
-                .attr("y2", function(d) {
-                    return y(d.value + std);
+                .attr("y2", function(d,i) {
+                    return y(d.value + std[i].value);
                 });
 
             // add error bottom cap
@@ -1349,14 +1358,14 @@ var previewCsvUrl = function( csvUrl ) {
                 .attr("x1", function(d) {
                     return x(d.key)-3 + x.bandwidth()/2;
                 })
-                .attr("y1", function(d) {
-                    return y(d.value - std);
+                .attr("y1", function(d,i) {
+                    return y(d.value - std[i].value);
                 })
                 .attr("x2", function(d) {
                     return x(d.key) + 3 + x.bandwidth()/2;
                 })
-                .attr("y2", function(d) {
-                    return y(d.value - std);
+                .attr("y2", function(d,i) {
+                    return y(d.value - std[i].value);
                 });
         }// end of bars with error bars but add it on the computed data
 
