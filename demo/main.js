@@ -318,22 +318,24 @@ function updateChart() {
             console.log('dotschart undefined');
         }else{
             dots_chart_line.remove().exit();
+            dots_remove.remove().exit();
+
         }
         // dots_chart.remove().exit(); //remove some of the encodings
         // console.log('redraw color removed idx',removed_idx);
-        dotsEnter
-            .append('circle')
-            // .data(whiskey).enter()
-            // .attr('cx',function(d){xScale(d[chartScales.x]);})
-            // .attr('cy', function(d){yScale(d[chartScales.y]);})
-            .style("fill", function (d, i) {
-                if (removed_idx.includes(i)) {
-                    return '#87CEFA'; //lightskyblue
-                } else {
-                    return "steelblue";
-                }
-            })
-            .attr('r', 4);
+        // dotsEnter
+        //     .append('circle')
+        //     // .data(whiskey).enter()
+        //     // .attr('cx',function(d){xScale(d[chartScales.x]);})
+        //     // .attr('cy', function(d){yScale(d[chartScales.y]);})
+        //     .style("fill", function (d, i) {
+        //         if (removed_idx.includes(i)) {
+        //             return '#87CEFA'; //lightskyblue
+        //         } else {
+        //             return "steelblue";
+        //         }
+        //     })
+        //     .attr('r', 4);
 
         dots_chart = chartG.append("g").attr('class', "Scatter")
             .selectAll("circle")
@@ -366,6 +368,8 @@ function updateChart() {
                 console.log('dotschart undefined');
             }else{
                 dots_chart_line.remove().exit();
+                dots_remove.remove().exit();
+
             }
 
             // add more ticks
@@ -454,7 +458,7 @@ function updateChart() {
                 // .attr('r', 4);
                 .attr('r', 4);
 
-               move = dots_chart.transition()
+            move = dots_chart.transition()
                 .duration(2000)
                 .attr('cx',420)
                 .transition()
@@ -462,8 +466,6 @@ function updateChart() {
                 .attr("cx", function (d) {
                     return xScale(d[chartScales.x]);
                 });
-
-
 
             // dots_chart.remove().exit();
 
@@ -482,8 +484,23 @@ function updateChart() {
                 console.log('dotschart undefined');
             }else{
                 dots_chart_line.remove().exit();
+                dots_remove.remove().exit();
+
             }
 
+            dots_remove = dotsEnter
+                .append('circle')
+                // .data(whiskey).enter()
+                // .attr('cx',function(d){xScale(d[chartScales.x]);})
+                // .attr('cy', function(d){yScale(d[chartScales.y]);})
+                .style("fill", function (d, i) {
+                    if (removed_idx.includes(i)) {
+                        return 'steelblue'; //lightskyblue
+                    } else {
+                        return "steelblue";
+                    }
+                })
+                .attr('r', 4);
 
             // var std = math.std(vals);
 
@@ -525,6 +542,8 @@ function updateChart() {
                 console.log('dotschart undefined');
             }else{
                 dots_chart_line.remove().exit();
+                dots_remove.remove().exit();
+
             }
 
 
@@ -540,15 +559,15 @@ function updateChart() {
                 .attr("offset", "100%")
                 .attr("stop-color", "steelblue");
 
-            dotsEnter.append('circle')
-                .style("fill", function (d, i) {
-                    if (removed_idx.includes(i)) {
-                        return 'url(#radial-gradient)'; //lightskyblue
-                    } else {
-                        return "steelblue";
-                    }
-                })
-                .attr('r', 4);
+            // dotsEnter.append('circle')
+            //     .style("fill", function (d, i) {
+            //         if (removed_idx.includes(i)) {
+            //             return 'url(#radial-gradient)'; //lightskyblue
+            //         } else {
+            //             return "steelblue";
+            //         }
+            //     })
+            //     .attr('r', 4);
 
             dots_chart = chartG.append("g").attr('class', "Scatter")
                 .selectAll("circle")
@@ -581,18 +600,20 @@ function updateChart() {
                 console.log('dotschart undefined');
             }else{
                 dots_chart_line.remove().exit();
+                dots_remove.remove().exit();
+
             }
 
 
-            dotsEnter.append('circle')
-                .style("fill", function (d, i) {
-                    if (removed_idx.includes(i)) {
-                        return 'url(#diagonal-stripes)'; //lightskyblue
-                    } else {
-                        return "steelblue";
-                    }
-                })
-                .attr('r', 4);
+            // dotsEnter.append('circle')
+            //     .style("fill", function (d, i) {
+            //         if (removed_idx.includes(i)) {
+            //             return 'url(#diagonal-stripes)'; //lightskyblue
+            //         } else {
+            //             return "steelblue";
+            //         }
+            //     })
+            //     .attr('r', 4);
 
 
             dots_chart = chartG.append("g").attr('class', "Scatter")
@@ -631,6 +652,8 @@ function updateChart() {
                 console.log('dotschart undefined');
             }else{
                 dots_chart_line.remove().exit();
+                dots_remove.remove().exit();
+
             }
 
 
