@@ -912,7 +912,7 @@ var previewCsvUrl = function( csvUrl ) {
         canvas.append("text")
         // .attr("class","unknown label")
             .attr("class","unknown")
-            .text("Number of Elements")
+            .text("Count")
             // .attr("transform", "rotate(-90)")
             .attr("x",width+50+15)
             .attr("y",height/2)
@@ -977,6 +977,24 @@ var previewCsvUrl = function( csvUrl ) {
                 // return d.key + " : " + d.key;
 
             });
+
+        canvas.append("rect")
+            .attr("x", width +50)
+            .attr("y", 0)
+            .attr("width", 10)
+            .attr("height", 10)
+            .style("fill", "silver");
+
+        canvas.append("text")
+        // .attr("class","unknown label")
+            .attr("class","legend")
+            .text("Not Missing")
+            // .attr("transform", "rotate(-90)")
+            .attr("x",width+50+15)
+            .attr("y",8)
+            .attr("font-size","11px")
+            .attr("fill","black");
+            // .attr("text-anchor","middle");
 
         select_check = false;
 
@@ -1123,6 +1141,8 @@ var previewCsvUrl = function( csvUrl ) {
             .text(function(d){
                 return d;
             });
+
+
 
 
         function redraw_bar_color(missingCount,notMissingCount){
