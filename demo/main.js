@@ -1218,7 +1218,6 @@ var previewCsvUrl = function( csvUrl ) {
 
         function redraw_bar_error(missingCount,avg,notMissingCount){
             // console.log('selectAvg',avg.map(function(d){return d.value}));
-
             if(select_check  === true){
                 avg = error_avg;
             }
@@ -1254,6 +1253,7 @@ var previewCsvUrl = function( csvUrl ) {
             console.log('avg',avg);
 
             // var std = math.std(vals);
+            var missingCategory = ["Single Malt","Highlands","Blended","Islay","Speyside","Burbon","Rye","Corn"];
 
 
             not_missing_bar = canvas.selectAll("rectangle")
@@ -1316,6 +1316,9 @@ var previewCsvUrl = function( csvUrl ) {
             bar_error_line = canvas.append("g").selectAll(".rectangle")
                 .data(avg).enter()
                 .append("line")
+                .filter(function (d, i) {
+                    return missingCategory.includes(d.key);
+                })
                 .attr("class", "error-line")
                 .attr("x1", function(d) {
                     // return x(d.key);
@@ -1337,6 +1340,9 @@ var previewCsvUrl = function( csvUrl ) {
                 .data(avg).enter()
                 .append("line")
                 .attr("class", "error-cap")
+                .filter(function (d, i) {
+                    return missingCategory.includes(d.key);
+                })
                 .attr("x1", function(d) {
                     return x(d.key)-3 + x.bandwidth()/2;
                 })
@@ -1355,6 +1361,9 @@ var previewCsvUrl = function( csvUrl ) {
                 .data(avg).enter()
                 .append("line")
                 .attr("class", "error-cap")
+                .filter(function (d, i) {
+                    return missingCategory.includes(d.key);
+                })
                 .attr("x1", function(d) {
                     return x(d.key)-3 + x.bandwidth()/2;
                 })
