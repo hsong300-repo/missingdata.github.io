@@ -237,6 +237,9 @@ function updateChart() {
     // dotsEnter.append('circle')
     //     .attr('r', 3);
     dotsEnter.append('circle')
+        .filter(function (d, i) {
+            return !removed_idx.includes(i)
+        })
         .style("fill","steelblue")
         // .attr("fill","steelblue")
         .attr('r', 4);
@@ -448,7 +451,19 @@ function updateChart() {
                 .attr("cy", function (d) {
                     return yScale(d[chartScales.y]);
                 })
+                // .attr('r', 4);
                 .attr('r', 4);
+
+               move = dots_chart.transition()
+                .duration(2000)
+                .attr('cx',420)
+                .transition()
+                .duration(2000)
+                .attr("cx", function (d) {
+                    return xScale(d[chartScales.x]);
+                });
+
+
 
             // dots_chart.remove().exit();
 
